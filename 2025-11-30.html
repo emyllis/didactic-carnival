@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pristine: A Strategy for Confident Living Quiz</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+        .quiz-container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+        }
+        .question-section {
+            margin-bottom: 1.5rem;
+        }
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .option-btn {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            background-color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            font-size: 1rem;
+        }
+        .option-btn:hover:not([disabled]) {
+            background-color: #eef2f5;
+            border-color: #b0bec5;
+        }
+        .option-btn.correct {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        .option-btn.incorrect {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        .feedback {
+            margin-top: 1rem;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            font-style: italic;
+        }
+        .next-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 1rem;
+            display: none;
+        }
+        .next-btn:hover {
+            background-color: #2980b9;
+        }
+        .score-section {
+            text-align: center;
+            display: none;
+        }
+        .progress {
+            text-align: right;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <h1>Pristine Living Quiz</h1>
+    
+    <div id="quiz-ui">
+        <div class="progress" id="progress">Question 1 of 6</div>
+        <div class="question-section">
+            <div class="question-text" id="question-text">Loading...</div>
+        </div>
+        <div class="options-container" id="options-container">
+            </div>
+        <div class="feedback" id="feedback"></div>
+        <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next Question</button>
+    </div>
+
+    <div class="score-section" id="score-section">
+        <h2>Quiz Complete!</h2>
+        <p>You scored <span id="score">0</span> out of <span id="total">0</span>.</p>
+        <p id="final-message"></p>
+        <button class="next-btn" style="display:inline-block;" onclick="location.reload()">Restart Quiz</button>
+    </div>
+</div>
+
+<script>
+    // Data derived from the provided transcripts and PDF
+    const questions = [
+        {
+            question: "According to the message, what does the word 'Pristine' mean?",
+            options: [
+                "Complicated and difficult to understand",
+                "Clean, pure, sparkling, and shined up",
+                "Hidden and secretive",
+                "Ancient and old-fashioned"
+            ],
+            correctIndex: 1,
+            note: "Reference: 'Pristine, great word like being shined up, clean, pure, sparkling, emphatic.' [Source: 94]"
+        },
+        {
+            question: "Dr. Woodruff warns that as we move to the finish, the enemy will unleash tactics that are:",
+            options: [
+                "Loud, obvious, and easily ignored",
+                "Weak, ineffective, and rare",
+                "Deceptive, seductive, and diversionary",
+                "Political, economic, and physical"
+            ],
+            correctIndex: 2,
+            note: "Reference: 'The movement to the finish will cause the enemy to unleash his most deceptive, most seductive, and most diversionary tactics.' [Source: 60]"
+        },
+        {
+            question: "What modern imagery was used to describe giving the devil a 'foothold' (Ephesians 4:27)?",
+            options: [
+                "A broken window",
+                "A helicopter landing strip/pad",
+                "An unlocked car",
+                "A cracked phone screen"
+            ],
+            correctIndex: 1,
+            note: "Reference: 'The translation is also a landing strip... we had the image there of a helicopter pad.' [Source: 72, 74]"
+        },
+        {
+            question: "Which of the following is NOT one of the four pillars of the 'Simplicity in Christ' mission mentioned?",
+            options: [
+                "To know Christ and His ways better",
+                "To grow to be like Christ",
+                "To attain financial prosperity",
+                "To overflow with the life of Christ"
+            ],
+            correctIndex: 2,
+            note: "Reference: The four points are Knowing Him, Growing like Him, Overflowing with His life, and Going home for the finish. [Source: 378-381]"
+        },
+        {
+            question: "What specific action was described as a way to 'neutralize' the enemy's attack?",
+            options: [
+                "Fighting back with physical strength",
+                "Arguing until you win",
+                "Retreating into a pristine application of the lifestyle of the Kingdom",
+                "Hiding in isolation away from people"
+            ],
+            correctIndex: 2,
+            note: "Reference: 'So we must retreat totally and completely into a pristine application of the lifestyle of the kingdom.' [Source: 91]"
+        },
+        {
+            question: "What object lesson from the GCL meeting was used to illustrate 'compactness' and unity?",
+            options: [
+                "A cord of three strands",
+                "A crunched-up piece of paper",
+                "A brick wall",
+                "A flowing river"
+            ],
+            correctIndex: 1,
+            note: "Reference: 'I love the image from that GCL meeting of the piece of paper being crunched up.' [Source: 35]"
+        }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    function loadQuestion() {
+        const q = questions[currentQuestion];
+        document.getElementById('question-text').innerText = q.question;
+        document.getElementById('progress').innerText = `Question ${currentQuestion + 1} of ${questions.length}`;
+        document.getElementById('feedback').style.display = 'none';
+        document.getElementById('next-btn').style.display = 'none';
+        
+        const container = document.getElementById('options-container');
+        container.innerHTML = '';
+
+        q.options.forEach((opt, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(index, btn);
+            container.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(selectedIndex, btnElement) {
+        // Disable all buttons
+        const buttons = document.querySelectorAll('.option-btn');
+        buttons.forEach(b => b.disabled = true);
+
+        const q = questions[currentQuestion];
+        const feedbackEl = document.getElementById('feedback');
+        
+        if (selectedIndex === q.correctIndex) {
+            score++;
+            btnElement.classList.add('correct');
+            feedbackEl.innerHTML = `<strong>Correct!</strong> <br>${q.note}`;
+            feedbackEl.style.color = '#155724';
+            feedbackEl.style.backgroundColor = '#d4edda';
+        } else {
+            btnElement.classList.add('incorrect');
+            buttons[q.correctIndex].classList.add('correct');
+            feedbackEl.innerHTML = `<strong>Incorrect.</strong> <br>${q.note}`;
+            feedbackEl.style.color = '#721c24';
+            feedbackEl.style.backgroundColor = '#f8d7da';
+        }
+
+        feedbackEl.style.display = 'block';
+        document.getElementById('next-btn').style.display = 'block';
+    }
+
+    function nextQuestion() {
+        currentQuestion++;
+        if (currentQuestion < questions.length) {
+            loadQuestion();
+        } else {
+            showScore();
+        }
+    }
+
+    function showScore() {
+        document.getElementById('quiz-ui').style.display = 'none';
+        document.getElementById('score-section').style.display = 'block';
+        document.getElementById('score').innerText = score;
+        document.getElementById('total').innerText = questions.length;
+        
+        const msg = document.getElementById('final-message');
+        if (score === questions.length) {
+            msg.innerText = "Fantastic! You have a pristine understanding of the message.";
+        } else if (score > questions.length / 2) {
+            msg.innerText = "Good job! You grasped the main concepts.";
+        } else {
+            msg.innerText = "Consider reviewing the teaching again to strengthen your foundations.";
+        }
+    }
+
+    // Initialize
+    loadQuestion();
+</script>
+
+</body>
+</html>
