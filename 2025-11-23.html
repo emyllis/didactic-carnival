@@ -3,163 +3,429 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NHKC Quiz</title>
+    <title>Heart to Horizon: Community & Mission Quiz</title>
     <style>
-        /* --- GLOBAL STYLES (Matches Home Page) --- */
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #e67e22;
+            --success-color: #27ae60;
+            --error-color: #c0392b;
+            --bg-color: #f4f6f7;
+            --card-bg: #ffffff;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #eef2f5;
+            background-color: var(--bg-color);
+            color: #333;
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* Changed to start so long quizzes scroll */
+            align-items: center;
             min-height: 100vh;
             margin: 0;
             padding: 20px;
         }
 
-        .card {
-            background-color: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        .quiz-container {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 100%;
             max-width: 600px;
-            width: 100%; /* Ensures it fills space on mobile */
-            margin-top: 20px;
+            padding: 30px;
+            text-align: center;
         }
 
-        h1 { color: #2c3e50; text-align: center; }
-        
-        /* --- QUIZ SPECIFIC STYLES --- */
-        .back-link {
-            text-decoration: none;
-            color: #7f8c8d;
-            font-size: 0.9em;
+        h1 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            background-color: #eee;
+            border-radius: 10px;
             margin-bottom: 20px;
-            display: inline-block;
-        }
-        .back-link:hover { color: #2c3e50; }
-
-        .question-block {
-            margin-bottom: 30px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 20px;
+            height: 10px;
+            overflow: hidden;
         }
 
-        .question-text {
-            font-weight: bold;
-            font-size: 1.1em;
-            color: #34495e;
-            margin-bottom: 15px;
+        .progress-fill {
+            height: 100%;
+            background-color: var(--accent-color);
+            width: 0%;
+            transition: width 0.3s ease;
         }
 
-        .options {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+        .question-section h2 {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            font-weight: 600;
+            line-height: 1.4;
         }
 
-        .option-btn {
-            padding: 10px 15px;
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        button.option-btn {
+            background-color: #fff;
             border: 2px solid #e0e0e0;
-            background: white;
-            border-radius: 6px;
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 1rem;
             cursor: pointer;
-            text-align: left;
             transition: all 0.2s;
-            font-size: 1em;
+            color: #444;
+            text-align: left;
         }
 
-        .option-btn:hover {
+        button.option-btn:hover:not(:disabled) {
+            border-color: var(--primary-color);
             background-color: #f9f9f9;
-            border-color: #bdc3c7;
         }
 
-        /* Styles for Right/Wrong feedback */
-        .correct {
-            background-color: #d4edda !important;
-            border-color: #c3e6cb !important;
-            color: #155724;
+        /* States for answers */
+        button.option-btn.correct {
+            background-color: #d4edda;
+            border-color: var(--success-color);
+            color: var(--success-color);
         }
-        
-        .wrong {
-            background-color: #f8d7da !important;
-            border-color: #f5c6cb !important;
-            color: #721c24;
+
+        button.option-btn.incorrect {
+            background-color: #f8d7da;
+            border-color: var(--error-color);
+            color: var(--error-color);
+        }
+
+        .feedback-section {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            display: none; /* Hidden by default */
+            border-left: 5px solid var(--primary-color);
         }
 
         .feedback-text {
-            margin-top: 10px;
-            font-size: 0.9em;
             font-style: italic;
-            display: none; /* Hidden by default */
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .next-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .next-btn:hover {
+            background-color: #34495e;
+        }
+
+        .results-section {
+            display: none;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: conic-gradient(var(--success-color) 0%, #eee 0%);
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .score-inner {
+            width: 130px;
+            height: 130px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .score-percentage {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .restart-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
 
-    <div class="card">
-        <a href="index.html" class="back-link">← Back to Home</a>
-
-        <h1>Questions from Nov 23rd</h1>
-        <p style="text-align: center; color: #7f8c8d;">Test your knowledge on the recent talk.</p>
-        <hr style="border: 0; height: 1px; background: #eee; margin: 20px 0;">
-
-        <div class="question-block">
-            <p class="question-text">1. What was the main scripture reference used in the talk?</p>
-            <div class="options">
-                <button class="option-btn" onclick="checkAnswer(this, false)">Genesis 1:1</button>
-                <button class="option-btn" onclick="checkAnswer(this, true)">John 3:16</button> <button class="option-btn" onclick="checkAnswer(this, false)">Romans 8:28</button>
-            </div>
-            <div class="feedback-text">Correct! It was the book of John.</div>
+<div class="quiz-container">
+    <div id="quiz-header">
+        <h1>Heart to Horizon Quiz</h1>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
         </div>
-
-        <div class="question-block">
-            <p class="question-text">2. Which illustration was used to describe Faith?</p>
-            <div class="options">
-                <button class="option-btn" onclick="checkAnswer(this, true)">A Chair</button> <button class="option-btn" onclick="checkAnswer(this, false)">A Ladder</button>
-                <button class="option-btn" onclick="checkAnswer(this, false)">A Bridge</button>
-            </div>
-            <div class="feedback-text">Yes! We have to sit in the chair to trust it.</div>
-        </div>
-
-        <div class="question-block" style="border-bottom: none;">
-            <p class="question-text">3. What is the key takeaway for this week?</p>
-            <div class="options">
-                <button class="option-btn" onclick="checkAnswer(this, false)">Just listen more</button>
-                <button class="option-btn" onclick="checkAnswer(this, false)">Read more books</button>
-                <button class="option-btn" onclick="checkAnswer(this, true)">Apply the word daily</button> </div>
-            <div class="feedback-text">Exactly. Application is key.</div>
-        </div>
-
+        <p id="progress-text">Question 1 of 10</p>
     </div>
 
-    <script>
-        // This little script handles the colors when you click
-        function checkAnswer(button, isCorrect) {
-            // Find the parent container (the specific question)
-            const parent = button.parentElement;
-            const feedback = parent.nextElementSibling; // The feedback text div
+    <div id="question-box" class="question-section">
+        <h2 id="question-text">Loading question...</h2>
+        <div class="options-grid" id="options-container">
+            </div>
+        
+        <div class="feedback-section" id="feedback-box">
+            <span class="feedback-text" id="feedback-text"></span>
+            <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next Question</button>
+        </div>
+    </div>
 
-            // Disable all buttons in this question so they can't guess again
-            const allButtons = parent.querySelectorAll('.option-btn');
-            allButtons.forEach(btn => {
-                btn.disabled = true;
-                btn.style.cursor = "default";
-            });
+    <div id="results-box" class="results-section">
+        <h2>Quiz Complete!</h2>
+        <div class="score-circle" id="score-circle">
+            <div class="score-inner">
+                <span class="score-percentage" id="final-score">0%</span>
+            </div>
+        </div>
+        <p id="final-message" style="font-size: 1.1rem; margin: 20px 0;"></p>
+        <button class="restart-btn" onclick="restartQuiz()">Retake Quiz</button>
+    </div>
+</div>
 
-            if (isCorrect) {
-                button.classList.add('correct');
-                feedback.style.display = "block";
-                feedback.style.color = "#155724";
-                feedback.innerText = "✅ Correct! " + feedback.innerText;
-            } else {
-                button.classList.add('wrong');
-                feedback.style.display = "block";
-                feedback.style.color = "#721c24";
-                feedback.innerText = "❌ Incorrect. " + feedback.innerText;
-            }
+<script>
+    // Embedded Quiz Data from previous turn
+    const quizData = [
+        {
+            "question": "According to the 'Four Circles of Our Life Together' diagram, what is the center-most circle?",
+            "options": [
+                { "text": "The Renewed Heart", "rationale": "Amen! It starts with personal transformation through our interface with God. Keep your heart centered on Him!", "isCorrect": true },
+                { "text": "The United Home", "rationale": "Not quite! The Home is the second circle. Remember, everything flows from the center—The Renewed Heart.", "isCorrect": false },
+                { "text": "The Engaged City", "rationale": "That is the third circle. We reach the city effectively when we start with a Renewed Heart.", "isCorrect": false },
+                { "text": "The Bagel of Truth", "rationale": "While bagels are delicious, the center circle is actually 'The Renewed Heart'.", "isCorrect": false }
+            ]
+        },
+        {
+            "question": "In the section on worship, what analogy is used to describe becoming accustomed to a negative spiritual atmosphere?",
+            "options": [
+                { "text": "Being 'Nose Blind'", "rationale": "Correct! Just as we get used to a smell, we can get used to spiritual 'sewage'. Stay sensitive to the Spirit!", "isCorrect": true },
+                { "text": "Being 'Ear Deaf'", "rationale": "Close concept, but the document specifically uses the sense of smell. Don't let the enemy dull your spiritual senses!", "isCorrect": false },
+                { "text": "Sleeping through the alarm", "rationale": "A good point, but the text talks about being 'Nose Blind'. Wake up your spirit and press in!", "isCorrect": false },
+                { "text": "Being a Spiritual Couch Potato", "rationale": "Funny, but the text calls it being 'Nose Blind'. Stand up and engage with worship!", "isCorrect": false }
+            ]
+        },
+        {
+            "question": "To protect unity, the document suggests we should be like the spire of the Empire State Building. Why?",
+            "options": [
+                { "text": "To provide 'No Landing Pads' for the enemy", "rationale": "Exactly! We want to be impossible for the enemy to land on. Keep your spirit sharp and your unity strong!", "isCorrect": true },
+                { "text": "To look really tall and impressive", "rationale": "It's not about pride; it's about spiritual defense. We want 'No Landing Pads' for division.", "isCorrect": false },
+                { "text": "So we can see the weather better", "rationale": "Not quite. The goal is to offer no flat surface for the enemy to land on. Stay vigilant!", "isCorrect": false },
+                { "text": "To catch giant gorillas", "rationale": "That's a movie! In this spiritual context, we want to prevent the enemy from finding a landing pad in our community.", "isCorrect": false }
+            ]
+        },
+        {
+            "question": "Regarding the 'No Landing Pads' concept, how is 'Gossip' defined?",
+            "options": [
+                { "text": "Any speech that corrodes fellowship", "rationale": "Spot on. Proverbs 26:20 says where there is no talebearer, strife ceases. Speak life over your community!", "isCorrect": true },
+                { "text": "Talking about the weather too much", "rationale": "That might be boring, but it's not the definition here. Gossip is speech that corrodes fellowship.", "isCorrect": false },
+                { "text": "Sharing breaking news", "rationale": "News is fine, but speech that damages relationships is what we must avoid to protect unity.", "isCorrect": false },
+                { "text": "Whispering about who ate the last donut", "rationale": "While crucial information, the document defines gossip as 'any speech that corrodes fellowship'.", "isCorrect": false }
+            ]
+        },
+        {
+            "question": "Why are Roman and Angelica's family from the Lviv church moving to Germany?",
+            "options": [
+                { "text": "Their son Daniel is turning 18 and faces conscription", "rationale": "Yes. This is a difficult season for them. Let's keep them in our prayers as they navigate this transition.", "isCorrect": true },
+                { "text": "They wanted to try authentic Bratwurst", "rationale": "A tasty thought, but the move is due to the war and their son Daniel's eligibility for conscription.", "isCorrect": false },
+                { "text": "They found a better church building there", "rationale": "No, they are fleeing the 'human cost of conflict'. Pray for their safety and stability.", "isCorrect": false },
+                { "text": "They are going on a permanent vacation", "rationale": "This is a forced relocation due to war, specifically regarding their son's safety. May God protect them.", "isCorrect": false }
+            ]
+        },
+        {
+            "question": "The building project in Harare, Zimbabwe is described as a 'Bidirectional Build'. What does this mean?",
+            "options": [
+                { "text": "God is building the people while they build the church", "rationale": "Beautifully put. It's about hearts being renewed just as much as bricks being laid. God is always working on us!", "isCorrect": true },
+                { "text": "They are building the roof and the floor at the same time", "rationale": "That would be physically difficult! It refers to building the *spiritual* people alongside the *physical* building.", "isCorrect": false },
+                { "text": "They are building it to face North and South", "rationale": "Not a directional compass thing. It's about the internal work in people matching the external work on the building.", "isCorrect": false },
+                { "text": "It has doors that open both ways", "rationale": "Convenient, but the 'bidirectional' aspect refers to the spiritual growth of the people alongside the construction.", "isCorrect": false }
+            ]
+        },
+        {
+            "question": "What is the significance of the upcoming Nexus Christmas Concert mentioned in the text?",
+            "options": [
+                { "text": "It is the final ever Nexus Christmas concert", "rationale": "Correct. It's the end of an era. Let's use this last opportunity to invite friends to hear the good news!", "isCorrect": true },
+                { "text": "It is the very first concert they've ever done", "rationale": "Actually, it is the *final* one. A great chance to celebrate Emmanuel one last time in this format.", "isCorrect": false },
+                { "text": "It will be performed entirely by robots", "rationale": "That would be cool, but it's the final concert marking the end of the provider's era.", "isCorrect": false },
+                { "text": "It is taking place on the moon", "rationale": "Far out! But it's happening right here in the city. Don't miss this final opportunity for outreach.", "isCorrect": false }
+            ]
+        },
+        {
+            "question": "In the 'Sieve of God' prophetic picture, what was the surprise revelation about what was being sorted?",
+            "options": [
+                { "text": "It wasn't sorting chaff; it was sorting seed for purpose", "rationale": "Amen. God isn't discarding you; He is sorting you for a specific Kingdom purpose to maximize yield!", "isCorrect": true },
+                { "text": "It was separating the good people from the bad people", "rationale": "The vision was more nuanced—it was about sorting *seed* for different purposes, not discarding 'bad' people.", "isCorrect": false },
+                { "text": "It was sorting laundry", "rationale": "God is practical, but this vision was about sorting 'seed' (His people) for strategic planting.", "isCorrect": false },
+                { "text": "It was removing the stones from the garden", "rationale": "The specific revelation was that 'It was all seed'. Trust that you are being positioned for growth.", "isCorrect": false }
+            ]
+        },
+        {
+            "question": "How does the document describe the financial gift to the Zimbabwe church?",
+            "options": [
+                { "text": "A partnership of equals, not a donor-recipient transaction", "rationale": "Yes! It subverts worldly definitions. We are brothers together. Generosity aligns us with God's heart.", "isCorrect": true },
+                { "text": "A high-interest loan", "rationale": "Never! It is a gift between equals to honor God. True partnership is about shared life, not debt.", "isCorrect": false },
+                { "text": "Charity for the poor", "rationale": "The text explicitly says it is *not* a transaction between a rich community and a poor one, but a partnership of equals.", "isCorrect": false },
+                { "text": "A winning lottery ticket", "rationale": "It's better than luck; it's Kingdom partnership! It signals to God that something different is happening.", "isCorrect": false }
+            ]
+        },
+        {
+            "question": "Complete the phrase from the document regarding our attitude: 'My attitude determines my...'",
+            "options": [
+                { "text": "Altitude", "rationale": "That's it! 'According to your faith, let it be done to you.' Keep your attitude lifted high!", "isCorrect": true },
+                { "text": "Latitude", "rationale": "Geographically interesting, but the phrase is 'Altitude'. Your faith lifts you up!", "isCorrect": false },
+                { "text": "Lunch order", "rationale": "Hungry? The phrase is actually 'Altitude'. Your spiritual posture matters more than your lunch!", "isCorrect": false },
+                { "text": "Magnitude", "rationale": "Close rhyme, but it's 'Altitude'. Rise above the circumstances with a faithful attitude.", "isCorrect": false }
+            ]
         }
-    </script>
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let questionAttempted = false; // Tracks if user has clicked anything for the current question
+
+    function loadQuestion() {
+        const currentData = quizData[currentQuestionIndex];
+        
+        // Update Progress
+        document.getElementById('progress-text').textContent = `Question ${currentQuestionIndex + 1} of ${quizData.length}`;
+        const progressPercentage = ((currentQuestionIndex) / quizData.length) * 100;
+        document.getElementById('progress-fill').style.width = `${progressPercentage}%`;
+
+        // Update Text
+        document.getElementById('question-text').textContent = currentData.question;
+
+        // Reset state
+        const optionsContainer = document.getElementById('options-container');
+        optionsContainer.innerHTML = '';
+        document.getElementById('feedback-box').style.display = 'none';
+        document.getElementById('next-btn').style.display = 'none'; // Hide next button initially
+        questionAttempted = false;
+
+        // Create Buttons (Shuffle options purely for display could be good, but fixed is fine too)
+        currentData.options.forEach((option, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.textContent = option.text;
+            btn.onclick = () => checkAnswer(option, btn);
+            optionsContainer.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(selectedOption, btnElement) {
+        const feedbackBox = document.getElementById('feedback-box');
+        const feedbackText = document.getElementById('feedback-text');
+        const nextBtn = document.getElementById('next-btn');
+        const allButtons = document.querySelectorAll('.option-btn');
+
+        // Show Feedback Box
+        feedbackBox.style.display = 'block';
+        feedbackText.textContent = selectedOption.rationale;
+
+        if (selectedOption.isCorrect) {
+            // Correct Answer Logic
+            btnElement.classList.add('correct');
+            feedbackBox.style.borderLeftColor = 'var(--success-color)';
+            
+            // Only increment score if this was the very first attempt at this question
+            if (!questionAttempted) {
+                score++;
+            }
+
+            // Disable all buttons so user can't change answers
+            allButtons.forEach(btn => btn.disabled = true);
+
+            // Show Next Button
+            nextBtn.style.display = 'inline-block';
+            
+            // If it's the last question, change Next button text
+            if (currentQuestionIndex === quizData.length - 1) {
+                nextBtn.textContent = "Finish Quiz";
+            }
+
+        } else {
+            // Incorrect Answer Logic
+            btnElement.classList.add('incorrect');
+            btnElement.disabled = true; // Disable just this wrong option
+            feedbackBox.style.borderLeftColor = 'var(--error-color)';
+            
+            // We do NOT show the next button. The user must keep trying.
+        }
+
+        // Mark that an attempt has been made (so subsequent correct clicks don't add to score)
+        questionAttempted = true;
+    }
+
+    function nextQuestion() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < quizData.length) {
+            loadQuestion();
+        } else {
+            showResults();
+        }
+    }
+
+    function showResults() {
+        document.getElementById('question-box').style.display = 'none';
+        document.getElementById('quiz-header').style.display = 'none';
+        document.getElementById('results-box').style.display = 'block';
+
+        const percentage = Math.round((score / quizData.length) * 100);
+        document.getElementById('final-score').textContent = `${percentage}%`;
+        
+        // Update circle graphic
+        document.getElementById('score-circle').style.background = 
+            `conic-gradient(var(--success-color) ${percentage}%, #eee ${percentage}%)`;
+
+        // Spiritual Message
+        const msgElement = document.getElementById('final-message');
+        if (percentage === 100) {
+            msgElement.textContent = "Perfect! You have truly absorbed the heart of the message. Go forth and multiply!";
+        } else if (percentage >= 70) {
+            msgElement.textContent = "Great job! You have a strong grasp of our community's mission. Keep pressing into the details.";
+        } else {
+            msgElement.textContent = "Good effort! The journey of renewal is ongoing. Take some time to review the 'Four Circles' and try again!";
+        }
+    }
+
+    function restartQuiz() {
+        currentQuestionIndex = 0;
+        score = 0;
+        document.getElementById('results-box').style.display = 'none';
+        document.getElementById('question-box').style.display = 'block';
+        document.getElementById('quiz-header').style.display = 'block';
+        loadQuestion();
+    }
+
+    // Initialize
+    loadQuestion();
+</script>
 
 </body>
 </html>
