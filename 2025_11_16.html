@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Spiritual Playbook Challenge</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --success: #16a34a;
+            --success-bg: #dcfce7;
+            --warning: #ca8a04;
+            --danger: #dc2626;
+            --danger-bg: #fee2e2;
+            --bg-color: #f8fafc;
+            --text-main: #1e293b;
+            --text-light: #64748b;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* Layout Grid: Title Left, Quiz Right */
+        .playbook-layout {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr; /* Title side smaller, Quiz side larger */
+            gap: 40px;
+            max-width: 1000px;
+            width: 100%;
+            align-items: start;
+        }
+
+        /* Left Side: Branding & Stats */
+        .intro-panel {
+            padding-top: 20px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            line-height: 1.1;
+            margin-bottom: 10px;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            color: var(--text-light);
+            font-size: 1rem;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .stats-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+            border-left: 5px solid var(--primary);
+        }
+
+        .score-label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-light);
+            font-weight: bold;
+        }
+
+        .score-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .progress-container {
+            margin-top: 15px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--success);
+            width: 0%;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Right Side: The Quiz Card */
+        .quiz-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            padding: 35px;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            border: 1px solid #e2e8f0;
+        }
+
+        .question-text {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: #1e293b;
+            line-height: 1.4;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            width: 100%;
+        }
+
+        button.option-btn {
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            padding: 16px 20px;
+            border-radius: 12px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #475569;
+            font-weight: 500;
+            text-align: left;
+            width: 100%;
+            position: relative;
+        }
+
+        button.option-btn:hover {
+            border-color: var(--primary);
+            background-color: #f8fafc;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        button.option-btn.correct {
+            background-color: var(--success-bg);
+            color: #14532d;
+            border-color: var(--success);
+            font-weight: 700;
+        }
+
+        button.option-btn.wrong {
+            background-color: var(--danger-bg);
+            border-color: var(--danger);
+            color: #7f1d1d;
+            animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        /* Sequence specific styles */
+        #seq-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        #seq-grid button {
+            width: auto;
+            flex: 1 1 45%;
+            text-align: center;
+        }
+
+        .feedback-area {
+            margin-top: 20px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .feedback-msg {
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding: 10px;
+            border-radius: 8px;
+            flex-grow: 1;
+            margin-right: 10px;
+        }
+
+        .next-btn {
+            padding: 12px 24px;
+            background-color: #0f172a;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: none;
+            animation: popIn 0.3s ease-out;
+            white-space: nowrap;
+        }
+        
+        .next-btn:hover { background-color: var(--primary); }
+
+        /* End Screen */
+        .end-screen {
+            text-align: center;
+        }
+        .end-rank {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 20px 0;
+        }
+
+        .hidden { display: none !important; }
+
+        /* Responsive Design */
+        @media (max-width: 800px) {
+            .playbook-layout {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            h1 { font-size: 2rem; }
+            .intro-panel { padding-top: 0; text-align: center; }
+            .stats-card { display: inline-block; width: 100%; text-align: left; }
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="playbook-layout">
+        
+        <div class="intro-panel">
+            <h1>The Spiritual Playbook</h1>
+            <p class="subtitle">Strengthen your inner life. Defend your walls. Master the strategy from the "Pillars of Worship & Wisdom" teaching.</p>
+            
+            <div class="stats-card">
+                <div class="score-label">Performance (Total Clicks)</div>
+                <div class="score-value" id="score">0</div>
+                <p style="font-size: 0.8rem; color: #94a3b8; margin: 5px 0 0 0;">Lower score is better! Choose wisely.</p>
+            </div>
+
+            <div class="progress-container">
+                <div class="score-label" style="margin-bottom: 5px;">Progress</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="quiz-card">
+            
+            <div id="quiz-content">
+                </div>
+
+            <div class="feedback-area">
+                <div id="feedback" class="feedback-msg"></div>
+                <button id="next-btn" class="next-btn">Next ➡</button>
+            </div>
+
+            <div id="end-screen" class="end-screen hidden">
+                <h2 style="color:var(--success); font-size: 2rem; margin-bottom: 10px;">Mission Accomplished!</h2>
+                <p>You have completed the playbook strategy.</p>
+                <div class="end-rank" id="final-rank"></div>
+                <p id="final-score-text" style="color: var(--text-light);"></p>
+                <button class="option-btn" onclick="location.reload()" style="background: #0f172a; color: white; margin-top: 20px; border:none;">Restart Training</button>
+            </div>
+
+        </div>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    
+    // --- Quiz Data ---
+    const questions = [
+        {
+            type: 'mc',
+            q: "1. The teaching identifies TWO pillars for a strong community. What are they?",
+            options: [
+                "Coffee & Doughnuts",
+                "Worship & Wisdom", 
+                "Singing & Napping",
+                "Strategy & Politics"
+            ],
+            answer: 1,
+            correctMsg: "Correct! Strengthening Inner Life (Worship) & Defending Outer Walls (Wisdom).",
+            wrongMsg: "Not quite! While doughnuts are nice, we need spiritual foundations. Try again."
+        },
+        {
+            type: 'mc',
+            q: "2. In Genesis 3:1, the enemy's 'Big Gun' is described not as force, but as...",
+            options: [
+                "A really loud roar",
+                "Sharp teeth",
+                "Craftiness",
+                "The ability to slither"
+            ],
+            answer: 2,
+            correctMsg: "Spot on. 'The serpent was more crafty...' It is a mental battle of deception.",
+            wrongMsg: "Think more subtle. He tries to trick the mind, not scare it with noise."
+        },
+        {
+            type: 'sequence',
+            q: "3. Click these enemy tactics in the correct order (The Craftiness Cycle):",
+            items: ["Plant Doubt", "Twist Meaning", "Elevate Self-Judgment", "Negotiate Loopholes"],
+            answer: [0, 1, 2, 3],
+            correctMsg: "Perfect sequence! Doubt -> Twist -> Elevate Self -> Find Loopholes.",
+            wrongMsg: "Incorrect order. Remember, it starts with the question: 'Did God really say?'"
+        },
+        {
+            type: 'mc',
+            q: "4. Worship has a 'horizontal' component. What does this mean?",
+            options: [
+                "We must worship while lying down",
+                "We declare truths to one another",
+                "It balances out the vertical bass notes",
+                "We hold hands in a straight line"
+            ],
+            answer: 1,
+            correctMsg: "Exactly! 'I will declare your name to my brothers.' It strengthens the body.",
+            wrongMsg: "Not literally horizontal! It's about the people standing next to you."
+        },
+        {
+            type: 'mc',
+            q: "5. The Hebrew word 'Arum' means 'Crafty' in darkness, but in the light it translates to:",
+            options: [
+                "Prudent / Wise",
+                "Sneaky",
+                "Delicious",
+                "Confused"
+            ],
+            answer: 0,
+            correctMsg: "Yes! In the light, it becomes wisdom, good sense, and prudence.",
+            wrongMsg: "Nope! Think of a virtue that involves thinking ahead."
+        },
+        {
+            type: 'mc',
+            q: "6. What is the definition given for 'Sincerity' based on the historical statue analogy?",
+            options: [
+                "Being very loud",
+                "Having 'No Wax' (No hidden cracks)",
+                "Crying while speaking",
+                "Being perfectly polished"
+            ],
+            answer: 1,
+            correctMsg: "That's it! 'No wax' means no hidden cracks that show up under sunlight.",
+            wrongMsg: "Good guess, but look for the specific analogy about fixing cracks in statues."
+        },
+        {
+            type: 'mc',
+            q: "7. Complete the quote: 'Nothing in the kingdom of God just emerges with time. Everything is...'",
+            options: [
+                "Microwaved",
+                "Built",
+                "Downloaded",
+                "Accidental"
+            ],
+            answer: 1,
+            correctMsg: "Amen. It takes intentional effort. 'Everything in the kingdom of God is built.'",
+            wrongMsg: "Incorrect! It requires more sweat equity than that."
+        },
+        {
+            type: 'mc',
+            q: "8. What is the enemy's mission as defined in the teaching?",
+            options: [
+                "To mildly annoy and distract",
+                "To steal, kill, and destroy",
+                "To make you late for work",
+                "To steal your lunch money"
+            ],
+            answer: 1,
+            correctMsg: "Correct. It is an existential battle. He is not here to negotiate.",
+            wrongMsg: "He's worse than a schoolyard bully. Think bigger stakes."
+        },
+        {
+            type: 'mc',
+            q: "9. How does a strong sense of MISSION protect you?",
+            options: [
+                "It gives you a cool badge",
+                "It clarifies the mind and defines boundaries",
+                "It makes you travel a lot",
+                "It gives you a bigger budget"
+            ],
+            answer: 1,
+            correctMsg: "Right! It clarifies you are sent by God and makes certain lifestyles 'not permitted.'",
+            wrongMsg: "Not quite. Focus on internal mental protection and boundaries."
+        },
+        {
+            type: 'mc',
+            q: "10. In the context of Spiritual Defense, what protects your mind specifically?",
+            options: [
+                "The Helmet of Salvation",
+                "The Beanie of Belief",
+                "The Cap of Courage",
+                "Positive Thinking"
+            ],
+            answer: 0,
+            correctMsg: "Yes. You need to guard your inner dialogue against the landing strips of the enemy.",
+            wrongMsg: "Fashionable, but not biblical armor! Try again."
+        },
+        {
+            type: 'mc',
+            q: "11. The Greek word 'Haplotes' is the antidote to craftiness. What does it mean?",
+            options: [
+                "Simplicity / Singleness of heart",
+                "Complexity",
+                "Hyper-activity",
+                "A type of Greek yogurt"
+            ],
+            answer: 0,
+            correctMsg: "Correct! Simplicity in Christ—integrity and finalized devotion.",
+            wrongMsg: "Tasty guess, but no. We are looking for a focused state of heart."
+        },
+        {
+            type: 'mc',
+            q: "12. The teaching mentions a 'Launch Site'. What does a spiritual attack reveal?",
+            options: [
+                "That the enemy has GPS issues",
+                "The location/strategy the enemy is firing from",
+                "That you should move houses",
+                "Nothing at all"
+            ],
+            answer: 1,
+            correctMsg: "Exactly. If he attacks your faith, you know he is firing from a place of doubt. Counter it!",
+            wrongMsg: "Incorrect. The attack itself gives you intelligence on the enemy's position."
+        },
+        {
+            type: 'mc',
+            q: "13. The GCL meeting identified how many 'platforms' or areas to pay attention to?",
+            options: [
+                "10",
+                "3",
+                "6",
+                "42"
+            ],
+            answer: 2,
+            correctMsg: "Right. Six platforms were identified for this season.",
+            wrongMsg: "Not quite. Think of a half-dozen."
+        },
+        {
+            type: 'mc',
+            q: "14. Regarding your mission track: 'You never get off the truck until...'",
+            options: [
+                "You get bored",
+                "It runs out of gas",
+                "God releases you / It is done",
+                "It's lunchtime"
+            ],
+            answer: 2,
+            correctMsg: "That's the spirit. Finalized devotion means you stay on track until the very end.",
+            wrongMsg: "No stopping for snacks! It's a lifelong mission."
+        },
+        {
+            type: 'mc',
+            q: "15. If the enemy whispers 'Did God really say?', what is the 'Prudent' response?",
+            options: [
+                "Start a debate club",
+                "Flip a coin to decide",
+                "Retreat into the safety of God's Word (Truth)",
+                "Google it"
+            ],
+            answer: 2,
+            correctMsg: "Correct. Don't judge the Word; let the Word judge the situation.",
+            wrongMsg: "Don't debate the devil on his terms. Run immediately to the Truth."
+        }
+    ];
+
+    // --- Variables ---
+    let currentQIndex = 0;
+    let clicks = 0;
+    let isQuestionActive = true;
+    let seqProgress = [];
+
+    // --- DOM Elements ---
+    const scoreElement = document.getElementById('score');
+    const quizContent = document.getElementById('quiz-content');
+    const nextButton = document.getElementById('next-btn');
+    const feedbackDiv = document.getElementById('feedback');
+    const progressBar = document.getElementById('progress');
+    const endScreen = document.getElementById('end-screen');
+
+    // --- Logic ---
+    
+    function initQuiz() {
+        renderQuestion();
+    }
+
+    function incrementClick() {
+        clicks++;
+        scoreElement.innerText = clicks;
+    }
+
+    function updateProgress() {
+        const pct = (currentQIndex / questions.length) * 100;
+        progressBar.style.width = `${pct}%`;
+    }
+
+    function renderQuestion() {
+        isQuestionActive = true;
+        nextButton.style.display = "none";
+        feedbackDiv.innerHTML = "";
+        feedbackDiv.className = "feedback-msg"; 
+        feedbackDiv.style.backgroundColor = "transparent";
+        
+        if (currentQIndex >= questions.length) {
+            endQuiz();
+            return;
+        }
+
+        const q = questions[currentQIndex];
+        
+        let html = `<div class="question-text">${q.q}</div>`;
+
+        if (q.type === 'mc') {
+            html += `<div class="options-grid">`;
+            q.options.forEach((opt, index) => {
+                html += `<button class="option-btn" data-idx="${index}">${opt}</button>`;
+            });
+            html += `</div>`;
+        } 
+        else if (q.type === 'sequence') {
+            html += `<p style="font-size:0.9rem; color:#64748b; margin-bottom:15px;">(Click items in the correct order)</p>`;
+            html += `<div class="options-grid" id="seq-grid">`;
+            
+            // Shuffle
+            let indices = q.items.map((_, i) => i);
+            indices.sort(() => Math.random() - 0.5);
+            
+            indices.forEach(i => {
+                html += `<button class="option-btn seq-btn" data-idx="${i}">${q.items[i]}</button>`;
+            });
+            html += `</div>`;
+            seqProgress = [];
+        }
+
+        quizContent.innerHTML = html;
+        updateProgress();
+
+        // Event Listeners
+        if (q.type === 'mc') {
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    handleMC(parseInt(this.dataset.idx), this);
+                });
+            });
+        } else if (q.type === 'sequence') {
+            document.querySelectorAll('.seq-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    handleSeq(parseInt(this.dataset.idx), this);
+                });
+            });
+        }
+    }
+
+    function handleMC(selectedIndex, btnElement) {
+        if (!isQuestionActive) return; 
+        incrementClick();
+
+        const q = questions[currentQIndex];
+
+        if (selectedIndex === q.answer) {
+            // Correct
+            btnElement.classList.add('correct');
+            feedbackDiv.innerHTML = q.correctMsg;
+            feedbackDiv.style.color = "#166534";
+            feedbackDiv.style.backgroundColor = "#dcfce7";
+            isQuestionActive = false;
+            nextButton.style.display = "inline-block";
+        } else {
+            // Wrong
+            btnElement.classList.add('wrong');
+            feedbackDiv.innerHTML = q.wrongMsg;
+            feedbackDiv.style.color = "#991b1b";
+            feedbackDiv.style.backgroundColor = "#fee2e2";
+        }
+    }
+
+    function handleSeq(index, btnElement) {
+        if (!isQuestionActive) return;
+        if (btnElement.classList.contains('correct')) return;
+
+        incrementClick();
+        const q = questions[currentQIndex];
+        const expectedIndex = q.answer[seqProgress.length];
+
+        if (index === expectedIndex) {
+            // Correct
+            btnElement.classList.add('correct');
+            seqProgress.push(index);
+
+            if (seqProgress.length === q.answer.length) {
+                feedbackDiv.innerHTML = q.correctMsg;
+                feedbackDiv.style.color = "#166534";
+                feedbackDiv.style.backgroundColor = "#dcfce7";
+                isQuestionActive = false;
+                nextButton.style.display = "inline-block";
+            }
+        } else {
+            // Wrong
+            btnElement.classList.add('wrong');
+            feedbackDiv.innerHTML = q.wrongMsg;
+            feedbackDiv.style.color = "#991b1b";
+            feedbackDiv.style.backgroundColor = "#fee2e2";
+            
+            // Reset
+            setTimeout(() => {
+                const allBtns = document.querySelectorAll('.seq-btn');
+                allBtns.forEach(b => b.classList.remove('correct', 'wrong'));
+                seqProgress = [];
+                feedbackDiv.innerHTML = ""; 
+                feedbackDiv.style.backgroundColor = "transparent";
+            }, 1500);
+        }
+    }
+
+    // Navigation
+    nextButton.addEventListener('click', () => {
+        currentQIndex++;
+        renderQuestion();
+    });
+
+    function endQuiz() {
+        quizContent.classList.add('hidden');
+        document.querySelector('.feedback-area').classList.add('hidden');
+        endScreen.classList.remove('hidden');
+        document.querySelector('.progress-bar').style.width = "100%";
+        
+        const finalScore = document.getElementById('final-score-text');
+        finalScore.innerText = `Total Clicks: ${clicks}`;
+
+        const rankMsg = document.getElementById('final-rank');
+        
+        if(clicks <= 16) {
+            rankMsg.innerText = "RANK: Prudent Master Builder (Perfect Score)";
+        } else if (clicks <= 22) {
+            rankMsg.innerText = "RANK: Spiritual Architect (Great Job)";
+        } else {
+            rankMsg.innerText = "RANK: Warrior in Training (Keep Building!)";
+        }
+    }
+
+    // Start
+    initQuiz();
+});
+</script>
+
+</body>
+</html>
