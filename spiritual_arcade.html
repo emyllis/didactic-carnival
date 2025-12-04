@@ -13,7 +13,7 @@
             --success-light: #dcfce7;
             --danger: #ef4444;
             --dark: #1e293b;
-            --light: #f8fafc;
+            --light: #f1f5f9;
             --white: #ffffff;
         }
 
@@ -34,28 +34,29 @@
             width: 100%;
             background: var(--white);
             border-radius: 20px;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15);
             overflow: hidden;
             position: relative;
-            min-height: 600px; /* Ensure height for all games */
+            min-height: 650px;
+            border: 1px solid #e2e8f0;
         }
 
         /* Header */
         .header {
             background: var(--dark);
             color: var(--white);
-            padding: 15px 30px;
+            padding: 20px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         .score-box {
-            background: rgba(255,255,255,0.1);
-            padding: 8px 16px;
+            background: rgba(255,255,255,0.2);
+            padding: 10px 20px;
             border-radius: 12px;
             font-weight: bold;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
         }
 
         /* Tabs */
@@ -70,13 +71,14 @@
             padding: 15px;
             text-align: center;
             cursor: pointer;
-            font-weight: 600;
+            font-weight: 700;
             color: #64748b;
             transition: 0.3s;
             border-bottom: 4px solid transparent;
+            user-select: none;
         }
 
-        .tab:hover { background: #f1f5f9; }
+        .tab:hover { background: #f8fafc; }
 
         .tab.active {
             background: var(--white);
@@ -86,21 +88,23 @@
 
         /* Game Views */
         .game-view {
-            display: none; /* Hidden by default */
+            display: none; 
             padding: 30px;
-            animation: fadeIn 0.4s ease;
+            animation: fadeIn 0.5s ease;
         }
 
-        .game-view.active { display: block; } /* Show when active */
+        /* Default active state for Game 1 to ensure visibility */
+        #game1 { display: block; }
 
-        h2 { margin-top: 0; color: var(--dark); font-size: 1.8rem; }
-        p.instruction { color: #64748b; font-style: italic; margin-bottom: 20px; font-size: 1.1rem; }
+        .game-view.active { display: block; }
+
+        h2 { margin-top: 0; color: var(--dark); font-size: 1.8rem; text-align: center; }
+        p.instruction { color: #64748b; font-style: italic; margin-bottom: 20px; font-size: 1.1rem; text-align: center;}
 
         /* --- ICONS --- */
-        .icon-large { font-size: 4rem; margin-bottom: 10px; display: block; }
-        .icon-header { font-size: 2rem; margin-right: 10px; vertical-align: middle; }
+        .icon-large { font-size: 4rem; margin-bottom: 10px; display: block; text-align: center;}
 
-        /* --- GAME 1: Factory vs Family (Drag & Drop) --- */
+        /* --- GAME 1: Factory vs Family --- */
         .sort-container {
             display: flex;
             gap: 20px;
@@ -109,8 +113,8 @@
 
         .bucket {
             flex: 1;
-            background: #f1f5f9;
-            border: 3px dashed #cbd5e1;
+            background: #f8fafc;
+            border: 3px dashed #94a3b8;
             border-radius: 12px;
             padding: 20px;
             min-height: 250px;
@@ -119,9 +123,6 @@
         }
 
         .bucket h3 { margin-top: 0; pointer-events: none; font-size: 1.2rem; }
-        
-        /* Mobile support for tap-to-sort */
-        .bucket.mobile-target { border-color: var(--primary); background: #e0e7ff; cursor: pointer; }
 
         .word-bank {
             display: flex;
@@ -130,4 +131,487 @@
             margin-bottom: 20px;
             min-height: 80px;
             padding: 15px;
-            background:
+            background: #e0f2fe;
+            border-radius: 12px;
+            border: 1px solid #bae6fd;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .draggable {
+            background: white;
+            border: 2px solid #cbd5e1;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: grab;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            font-weight: 600;
+            user-select: none;
+            font-size: 0.95rem;
+        }
+
+        .draggable:active { cursor: grabbing; transform: scale(0.98); }
+        
+        /* --- GAME 2: Arum Decoder --- */
+        .card-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 30px 0;
+        }
+
+        .flashcard {
+            width: 100%;
+            max-width: 450px;
+            height: 200px;
+            background: white;
+            border: 4px solid var(--dark);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            box-shadow: 0 15px 30px -10px rgba(0,0,0,0.2);
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 30px;
+        }
+
+        .choice-btns {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .choice-btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            color: white;
+            width: 180px;
+        }
+
+        .btn-evil { background: var(--dark); box-shadow: 0 4px 0 #0f172a; }
+        .btn-good { background: var(--accent); box-shadow: 0 4px 0 #d97706; }
+        .btn-evil:active, .btn-good:active { transform: translateY(4px); box-shadow: none; }
+
+        /* --- GAME 3: Fortress Builder --- */
+        .sentence-box {
+            font-size: 1.3rem;
+            line-height: 2.2;
+            margin-bottom: 40px;
+            background: #f8fafc;
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .blank {
+            display: inline-block;
+            min-width: 100px;
+            border-bottom: 3px solid var(--primary);
+            text-align: center;
+            color: var(--primary);
+            font-weight: bold;
+            cursor: pointer;
+            padding: 0 5px;
+            margin: 0 5px;
+            transition: 0.2s;
+        }
+
+        .blank:hover { background: #e0e7ff; }
+        .blank.active { background: #fef3c7; border-color: var(--accent); transform: scale(1.1); }
+        .blank.filled { border-bottom: none; background: var(--success-light); color: var(--success); border-radius: 6px; pointer-events: none; }
+
+        .word-options {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .word-btn {
+            background: white;
+            border: 2px solid #cbd5e1;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--dark);
+            transition: 0.2s;
+        }
+
+        .word-btn:hover { border-color: var(--primary); transform: translateY(-2px); background: #f0f9ff; }
+
+        /* Feedback Overlay */
+        .overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,255,255,0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: 0.3s;
+            backdrop-filter: blur(5px);
+        }
+        .overlay.show { opacity: 1; pointer-events: all; }
+        .overlay h2 { font-size: 3rem; margin-bottom: 10px; }
+        .overlay p { font-size: 1.5rem; margin-bottom: 30px; text-align: center; max-width: 80%; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pop { 0% { transform: scale(0.8); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .sort-container { flex-direction: column; }
+            .bucket { min-height: 120px; }
+            .choice-btns { flex-direction: column; align-items: center; }
+            .icon-large { font-size: 3rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <div class="header">
+        <div style="font-weight:800; font-size:1.2rem;">🏛️ Spiritual Arcade</div>
+        <div class="score-box">Score: <span id="total-score">0</span></div>
+    </div>
+
+    <div class="tabs">
+        <div class="tab active" id="tab-1" onclick="switchTab(1)">1. Mindset Sorter</div>
+        <div class="tab" id="tab-2" onclick="switchTab(2)">2. Arum Decoder</div>
+        <div class="tab" id="tab-3" onclick="switchTab(3)">3. Fortress Builder</div>
+    </div>
+
+    <div id="game1" class="game-view active">
+        <span class="icon-large">🏭 vs 🏠</span>
+        <h2>The Mindset Sorter</h2>
+        <p class="instruction">Drag the phrase (or click it, then click the box) to sort it into <strong>Factory</strong> or <strong>Family</strong> thinking.</p>
+        
+        <div class="word-bank" id="word-bank-1">
+            <div class="draggable" draggable="true">Loading...</div>
+        </div>
+
+        <div class="sort-container">
+            <div class="bucket" id="bucket-factory" ondrop="drop(event, 'factory')" ondragover="allowDrop(event)" onclick="mobileSort('factory')">
+                <h3>🏭 Factory Mindset</h3>
+                <p style="font-size:0.9rem; color:#94a3b8;">(Operational / Cold)</p>
+            </div>
+            <div class="bucket" id="bucket-family" ondrop="drop(event, 'family')" ondragover="allowDrop(event)" onclick="mobileSort('family')">
+                <h3>🏠 Family Mindset</h3>
+                <p style="font-size:0.9rem; color:#94a3b8;">(Relational / Warm)</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="game2" class="game-view">
+        <span class="icon-large">🐍 vs 🛡️</span>
+        <h2>The "Arum" Decoder</h2>
+        <p class="instruction">'Arum' means clever. In the Bible, it can be used for Evil (Deception) or Good (Prudence).</p>
+
+        <div class="card-area">
+            <div class="flashcard" id="arum-card">
+                Click a button below to start!
+            </div>
+        </div>
+
+        <div class="choice-btns">
+            <button class="choice-btn btn-evil" onclick="guessArum('evil')">😈 Evil / Deceptive</button>
+            <button class="choice-btn btn-good" onclick="guessArum('good')">💡 Good / Prudent</button>
+        </div>
+    </div>
+
+    <div id="game3" class="game-view">
+        <span class="icon-large">🧱</span>
+        <h2>Fortress Builder</h2>
+        <p class="instruction">1. Click a <u>blank line</u>. 2. Click the matching word below.</p>
+        
+        <div class="sentence-box">
+            1. Your <span class="blank" onclick="selectBlank(this, 'attitude')">____</span> determines your altitude.<br>
+            2. Worship is a <span class="blank" onclick="selectBlank(this, 'transactional')">____</span> meeting with God.<br>
+            3. The word 'worship' is <span class="blank" onclick="selectBlank(this, 'sacred')">____</span>.<br>
+            4. Only the <span class="blank" onclick="selectBlank(this, 'grace')">____</span> knows the way.
+        </div>
+
+        <div class="word-options" id="builder-options">
+            </div>
+    </div>
+
+    <div id="overlay" class="overlay">
+        <span class="icon-large" id="overlay-icon">🎉</span>
+        <h2 id="overlay-title">Nice!</h2>
+        <p id="overlay-msg">Correct.</p>
+        <button class="choice-btn btn-good" onclick="closeOverlay()">Continue</button>
+    </div>
+
+</div>
+
+<script>
+// Wait for page load to ensure elements exist
+window.onload = function() {
+
+    // --- GLOBAL STATE ---
+    let score = 0;
+    const scoreEl = document.getElementById('total-score');
+    let activeGame = 1;
+    
+    // --- TAB NAVIGATION ---
+    window.switchTab = function(gameNum) {
+        activeGame = gameNum;
+        
+        // 1. Hide all views
+        document.getElementById('game1').style.display = 'none';
+        document.getElementById('game2').style.display = 'none';
+        document.getElementById('game3').style.display = 'none';
+        
+        // 2. Reset tabs
+        document.getElementById('tab-1').classList.remove('active');
+        document.getElementById('tab-2').classList.remove('active');
+        document.getElementById('tab-3').classList.remove('active');
+
+        // 3. Show selected
+        document.getElementById('game' + gameNum).style.display = 'block';
+        document.getElementById('tab-' + gameNum).classList.add('active');
+
+        // 4. Re-init logic if needed
+        if(gameNum === 2) initGame2(); 
+        if(gameNum === 3) initGame3();
+    }
+
+    // --- SCORING & FEEDBACK ---
+    window.updateScore = function(points) {
+        score += points;
+        scoreEl.innerText = score;
+        scoreEl.style.animation = "pop 0.3s ease";
+        setTimeout(() => scoreEl.style.animation = "", 300);
+    }
+
+    window.showFeedback = function(title, msg, isGood) {
+        const ol = document.getElementById('overlay');
+        const t = document.getElementById('overlay-title');
+        const m = document.getElementById('overlay-msg');
+        const i = document.getElementById('overlay-icon');
+        
+        t.innerText = title;
+        t.style.color = isGood ? "var(--success)" : "var(--danger)";
+        m.innerText = msg;
+        i.innerText = isGood ? "🎉" : "❌";
+        
+        ol.classList.add('show');
+        
+        if(isGood) updateScore(10);
+        else updateScore(-5);
+    }
+
+    window.closeOverlay = function() {
+        document.getElementById('overlay').classList.remove('show');
+        if (activeGame === 2) nextArumCard();
+    }
+
+    // --- GAME 1: FACTORY VS FAMILY ---
+    const sortItems = [
+        { id: "i1", text: "Get it done quickly", type: "factory" },
+        { id: "i2", text: "Meet with God first", type: "family" },
+        { id: "i3", text: "Efficiency Focus", type: "factory" },
+        { id: "i4", text: "Compassion Focus", type: "family" },
+        { id: "i5", text: "Outputs & Products", type: "factory" },
+        { id: "i6", text: "Relational Depth", type: "family" }
+    ];
+
+    let selectedDragItem = null; 
+
+    function initGame1() {
+        const bank = document.getElementById('word-bank-1');
+        bank.innerHTML = ""; 
+        
+        sortItems.sort(() => Math.random() - 0.5);
+        
+        sortItems.forEach(item => {
+            const el = document.createElement('div');
+            el.classList.add('draggable');
+            el.draggable = true;
+            el.innerText = item.text;
+            el.id = item.id;
+            el.dataset.type = item.type;
+            
+            el.addEventListener('dragstart', drag);
+            
+            // Click support for mobile
+            el.addEventListener('click', function() {
+                document.querySelectorAll('.draggable').forEach(d => {
+                    d.style.borderColor = "#cbd5e1";
+                    d.style.background = "white";
+                });
+                this.style.borderColor = "var(--primary)";
+                this.style.background = "#e0e7ff";
+                selectedDragItem = this;
+            });
+
+            bank.appendChild(el);
+        });
+    }
+
+    window.allowDrop = function(ev) { ev.preventDefault(); }
+    window.drag = function(ev) { ev.dataTransfer.setData("text", ev.target.id); }
+    
+    window.drop = function(ev, targetType) {
+        ev.preventDefault();
+        const data = ev.dataTransfer.getData("text");
+        processSort(document.getElementById(data), targetType, ev.currentTarget);
+    }
+
+    window.mobileSort = function(targetType) {
+        if (!selectedDragItem) return;
+        const targetBucket = document.getElementById('bucket-' + targetType);
+        processSort(selectedDragItem, targetType, targetBucket);
+        selectedDragItem = null;
+    }
+
+    function processSort(el, targetType, targetContainer) {
+        if(!el) return;
+        const itemType = el.dataset.type;
+
+        if (itemType === targetType) {
+            targetContainer.appendChild(el);
+            el.style.background = "#dcfce7";
+            el.style.border = "2px solid var(--success)";
+            el.draggable = false;
+            el.onclick = null; 
+            updateScore(10);
+        } else {
+            showFeedback("Oops!", "That belongs in the other mindset! (Factory = Tasks, Family = People)", false);
+            el.style.background = "white";
+            el.style.borderColor = "#cbd5e1";
+        }
+    }
+
+    // --- GAME 2: ARUM DECODER ---
+    const arumCards = [
+        { text: "Tricking someone into sin", type: "evil", hint: "This uses smarts to destroy." },
+        { text: "Seeing danger and hiding", type: "good", hint: "This is Prudence (Proverbs 22:3)." },
+        { text: "Asking 'Did God really say?'", type: "evil", hint: "This creates doubt (Genesis 3)." },
+        { text: "Planning your way carefully", type: "good", hint: "This is Wisdom in the light." }
+    ];
+    let arumIndex = -1;
+
+    function initGame2() {
+        if(arumIndex === -1) nextArumCard();
+    }
+
+    window.nextArumCard = function() {
+        arumIndex++;
+        const card = document.getElementById('arum-card');
+        if (arumIndex < arumCards.length) {
+            card.innerText = arumCards[arumIndex].text;
+            card.style.animation = "none";
+            setTimeout(() => card.style.animation = "pop 0.3s ease", 10);
+        } else {
+            card.innerText = "All Decoded! Great Wisdom.";
+            card.style.background = "#dcfce7";
+            card.style.borderColor = "var(--success)";
+        }
+    }
+
+    window.guessArum = function(guess) {
+        if (arumIndex >= arumCards.length || arumIndex === -1) return;
+
+        const current = arumCards[arumIndex];
+        if (guess === current.type) {
+            showFeedback("Correct!", current.type === 'good' ? "That is Prudence!" : "That is Deception!", true);
+        } else {
+            showFeedback("Wrong!", "Look closer: " + current.hint, false);
+        }
+    }
+
+    // --- GAME 3: FORTRESS BUILDER ---
+    let activeBlank = null;
+    let game3Initialized = false;
+    
+    const builderWords = [
+        { text: "Attitude", val: "attitude" },
+        { text: "Pizza", val: "pizza" }, 
+        { text: "Transactional", val: "transactional" },
+        { text: "Casual", val: "casual" }, 
+        { text: "Sacred", val: "sacred" },
+        { text: "Grace", val: "grace" }
+    ];
+
+    function initGame3() {
+        if(game3Initialized) return;
+        
+        const container = document.getElementById('builder-options');
+        container.innerHTML = "";
+        
+        builderWords.sort(() => Math.random() - 0.5);
+        
+        builderWords.forEach(w => {
+            const btn = document.createElement('button');
+            btn.classList.add('word-btn');
+            btn.innerText = w.text;
+            btn.onclick = () => checkBuilder(w.val, btn);
+            container.appendChild(btn);
+        });
+        game3Initialized = true;
+    }
+
+    window.selectBlank = function(el, answer) {
+        document.querySelectorAll('.blank').forEach(b => {
+            if(!b.classList.contains('filled')) {
+                b.style.background = "transparent";
+                b.style.transform = "scale(1)";
+            }
+        });
+        
+        if (!el.classList.contains('filled')) {
+            activeBlank = el;
+            activeBlank.dataset.answer = answer;
+            activeBlank.style.background = "#fef3c7";
+            activeBlank.style.transform = "scale(1.1)";
+        }
+    }
+
+    function checkBuilder(val, btn) {
+        if (!activeBlank) {
+            alert("Tap a blank line in the sentences above first!");
+            return;
+        }
+
+        if (val === activeBlank.dataset.answer) {
+            activeBlank.innerText = btn.innerText;
+            activeBlank.classList.add('filled');
+            activeBlank.style.background = "#dcfce7";
+            activeBlank.style.transform = "scale(1)";
+            
+            btn.style.opacity = "0.5";
+            btn.style.pointerEvents = "none";
+            btn.innerText = "✅ " + btn.innerText;
+            
+            activeBlank = null;
+            updateScore(10);
+        } else {
+            if (val === 'pizza') showFeedback("Really?", "Pizza is great, but it doesn't determine your spiritual altitude!", false);
+            else showFeedback("Try again", "That word doesn't fit the spiritual law.", false);
+        }
+    }
+
+    // Start Game 1 immediately
+    initGame1();
+};
+</script>
+
+</body>
+</html>
