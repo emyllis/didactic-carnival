@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Horizons Interactive Quiz</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --accent: #3498db;
+            --success: #27ae60;
+            --error: #c0392b;
+            --gold: #f1c40f;
+            --bg-gradient: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-gradient);
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+        }
+
+        /* Fun Church Themed Background Pattern */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(52, 152, 219, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(241, 196, 15, 0.05) 0%, transparent 20%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+            position: relative;
+            border-top: 5px solid var(--accent);
+        }
+
+        .header {
+            background-color: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+
+        .header h1 {
+            margin: 0;
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: #eee;
+            width: 100%;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        /* Question Styles */
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: var(--primary);
+        }
+
+        .options-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            text-align: left;
+            transition: all 0.2s;
+            width: 100%;
+            color: #555;
+        }
+
+        .btn:hover {
+            border-color: var(--accent);
+            background-color: #f0f8ff;
+        }
+
+        .btn.correct {
+            background-color: #d4edda;
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .btn.wrong {
+            background-color: #f8d7da;
+            border-color: var(--error);
+            color: var(--error);
+            animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        /* Feedback Section */
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+            text-align: center;
+            font-weight: bold;
+        }
+        .feedback.show { display: block; }
+        .feedback.success { background: #d4edda; color: #155724; }
+        .feedback.error { background: #f8d7da; color: #721c24; }
+
+        /* Next Button */
+        .next-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: bold;
+            margin-top: 20px;
+            cursor: pointer;
+            display: none; /* Hidden until answered */
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .next-btn:hover { background-color: #34495e; }
+
+        /* Matching Game Styles */
+        .matching-area {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .match-column {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 48%;
+        }
+        .match-item {
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background: #fff;
+            cursor: pointer;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+        .match-item.selected {
+            border-color: var(--accent);
+            background-color: #eaf2f8;
+        }
+        .match-item.matched {
+            border-color: var(--success);
+            background-color: #d4edda;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        /* Animations */
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        /* Intro & Outro */
+        .intro-screen, .outro-screen {
+            text-align: center;
+        }
+        .start-btn {
+            background: var(--accent);
+            color: white;
+            font-size: 1.2rem;
+            padding: 15px 40px;
+            border-radius: 30px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+            margin-top: 20px;
+        }
+        .score-display {
+            font-size: 3rem;
+            color: var(--accent);
+            font-weight: bold;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+    
+    <div class="header">
+        <h1 id="quiz-title">New Horizons Quiz</h1>
+    </div>
+
+    <div class="content" id="quiz-content">
+        </div>
+</div>
+
+<script>
+    // --- QUIZ DATA ---
+    // Source: 2025 12 07.txt and PDFs
+    
+    const questions = [
+        {
+            type: "intro",
+            title: "Ready for the Visit?",
+            text: "Test your knowledge on the upcoming Apostolic Visit and the message about the Fortress!",
+            btnText: "Start Quiz"
+        },
+        // Q1
+        {
+            type: "choice",
+            question: "Who is the special guest visiting New Horizons next weekend?",
+            options: [
+                "The Prime Minister",
+                "Dr. Woodruff (The Apostle)", 
+                "A famous worship leader",
+                "Just a surveyor"
+            ],
+            correctIndex: 1,
+            feedback: "Correct! [cite_start]Dr. Woodruff is visiting to bring impartation. [cite: 3]"
+        },
+        // Q2
+        {
+            type: "choice",
+            question: "Where will the Saturday meeting be held?",
+            options: [
+                "The Church Hall",
+                "Coventry Cathedral",
+                "The Techno Centre",
+                "In the park"
+            ],
+            correctIndex: 2,
+            feedback: "That's right! [cite_start]It's at the Techno Centre at 9:30 AM. [cite: 100]"
+        },
+        // Q3
+        {
+            type: "choice",
+            question: "Dr. Woodruff used an analogy about blind men touching an animal to explain perspective. What animal was it?",
+            options: [
+                "A Lion",
+                "A Sheep",
+                "An Elephant",
+                "A Dove"
+            ],
+            correctIndex: 2,
+            feedback: "Yes! The elephant. [cite_start]One sees a rope, one sees a wall, but the Apostle sees the whole elephant. [cite: 401]"
+        },
+        // Q4
+        {
+            type: "choice",
+            question: "We are called to build a 'Fortress'. What are the three levels of this fortress?",
+            options: [
+                "Brick, Wood, and Stone",
+                "Individual, Family, and Community",
+                "Elders, Deacons, and Members",
+                "Past, Present, and Future"
+            ],
+            correctIndex: 1,
+            feedback: "Exactly. [cite_start]We build personal fortresses, family fortresses, and a community fortress. [cite: 457, 485]"
+        },
+        // Q5 - Christmas/Joseph
+        {
+            type: "choice",
+            question: "In the Christmas message, who 'saved Christmas' by making a righteous decision quietly?",
+            options: [
+                " The Shepherds",
+                "The Wise Men",
+                "Joseph",
+                "Innkeeper"
+            ],
+            correctIndex: 2,
+            feedback: "Correct. Joseph decided not to expose Mary to public disgrace. [cite_start]One righteous decision changed history! [cite: 759]"
+        },
+        // Q6 - Matching Game
+        {
+            type: "matching",
+            question: "Match the Mandate! (Tap an item on the left, then its match on the right)",
+            pairs: [
+                { left: "Men", right: "Stand as men of God, not personal preference" },
+                { left: "Women", right: "Walk into new wisdom and holiness" },
+                { left: "Youth", right: "Rise with a new vision for the future" },
+                { left: "The Goal", right: "Christ-likeness in all things" }
+            ],
+            [cite_start]feedback: "Great job matching the mandates! [cite: 799-804]"
+        },
+        // Q7
+        {
+            type: "choice",
+            question: "What is the 'Home Match' mentality mentioned for next weekend?",
+            options: [
+                "We need to win against the visitors",
+                "We sit back and watch the show",
+                "We set the atmosphere of faith (we are the hosts)",
+                "We wear our favorite football kits"
+            ],
+            correctIndex: 2,
+            feedback: "Yes! [cite_start]As the home team, our faith environment should be equal to or greater than the visitors. [cite: 185-186]"
+        }
+    ];
+
+    // --- APP STATE ---
+    let currentQ = 0;
+    let score = 0;
+    let maxScore = questions.length - 1; // Minus intro
+    let selectedLeft = null; // For matching game
+
+    const contentDiv = document.getElementById('quiz-content');
+    const titleDiv = document.getElementById('quiz-title');
+    const progressFill = document.getElementById('progress');
+
+    // --- RENDER FUNCTIONS ---
+
+    function render() {
+        // Update Progress
+        const percent = (currentQ / (questions.length - 1)) * 100;
+        progressFill.style.width = percent + "%";
+
+        const q = questions[currentQ];
+        contentDiv.innerHTML = '';
+
+        if (q.type === 'intro') {
+            titleDiv.innerText = "Welcome";
+            contentDiv.innerHTML = `
+                <div class="intro-screen">
+                    <p style="font-size: 1.1em; color: #555;">${q.text}</p>
+                    <button class="start-btn" onclick="nextQuestion()">${q.btnText}</button>
+                </div>
+            `;
+        } 
+        else if (q.type === 'choice') {
+            titleDiv.innerText = `Question ${currentQ} of ${maxScore}`;
+            
+            let html = `<div class="question-text">${q.question}</div><div class="options-grid">`;
+            
+            q.options.forEach((opt, index) => {
+                html += `<button class="btn" onclick="handleChoice(this, ${index})">${opt}</button>`;
+            });
+
+            html += `</div>
+                <div class="feedback" id="feedback"></div>
+                <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next Question →</button>
+            `;
+            contentDiv.innerHTML = html;
+        }
+        else if (q.type === 'matching') {
+            titleDiv.innerText = `Question ${currentQ} of ${maxScore}`;
+            renderMatchingGame(q);
+        }
+        else if (q.type === 'outro') {
+            showOutro();
+        }
+    }
+
+    // --- LOGIC: MULTIPLE CHOICE ---
+
+    function handleChoice(btn, index) {
+        const q = questions[currentQ];
+        const feedbackEl = document.getElementById('feedback');
+        const nextBtn = document.getElementById('nextBtn');
+        const allBtns = document.querySelectorAll('.btn');
+
+        if (index === q.correctIndex) {
+            // Correct
+            btn.classList.add('correct');
+            feedbackEl.innerText = "🎉 " + q.feedback;
+            feedbackEl.className = "feedback show success";
+            score++;
+            
+            // Disable all buttons
+            allBtns.forEach(b => b.disabled = true);
+            nextBtn.style.display = "block";
+        } else {
+            // Wrong
+            btn.classList.add('wrong');
+            feedbackEl.innerText = "❌ Not quite. Try again!";
+            feedbackEl.className = "feedback show error";
+            
+            // Allow retry (don't disable buttons yet)
+            setTimeout(() => {
+                btn.classList.remove('wrong');
+            }, 500);
+        }
+    }
+
+    // --- LOGIC: MATCHING GAME ---
+
+    function renderMatchingGame(q) {
+        // Shuffle functionality
+        let leftItems = q.pairs.map((p, i) => ({text: p.left, id: i}));
+        let rightItems = q.pairs.map((p, i) => ({text: p.right, id: i}));
+        
+        // Simple shuffle for right side
+        rightItems.sort(() => Math.random() - 0.5);
+
+        let html = `<div class="question-text">${q.question}</div>
+        <div class="matching-area">
+            <div class="match-column" id="col-left">
+                ${leftItems.map(item => `<div class="match-item" onclick="selectLeft(this, ${item.id})">${item.text}</div>`).join('')}
+            </div>
+            <div class="match-column" id="col-right">
+                ${rightItems.map(item => `<div class="match-item" onclick="selectRight(this, ${item.id})">${item.text}</div>`).join('')}
+            </div>
+        </div>
+        <div class="feedback" id="matchFeedback"></div>
+        <button class="next-btn" id="matchNextBtn" onclick="nextQuestion()">Next Question →</button>`;
+        
+        contentDiv.innerHTML = html;
+        
+        // Track matches remaining
+        window.matchesRemaining = q.pairs.length;
+    }
+
+    window.selectLeft = function(el, id) {
+        if(el.classList.contains('matched')) return;
+        
+        // Deselect others
+        document.querySelectorAll('#col-left .match-item').forEach(d => d.classList.remove('selected'));
+        el.classList.add('selected');
+        selectedLeft = { el, id };
+    }
+
+    window.selectRight = function(el, id) {
+        if(el.classList.contains('matched')) return;
+        if(!selectedLeft) return;
+
+        if (id === selectedLeft.id) {
+            // Match!
+            el.classList.add('matched');
+            selectedLeft.el.classList.add('matched');
+            selectedLeft.el.classList.remove('selected');
+            selectedLeft = null;
+            window.matchesRemaining--;
+            
+            if(window.matchesRemaining === 0) {
+                const feedbackEl = document.getElementById('matchFeedback');
+                feedbackEl.innerText = "🎉 All matched! " + questions[currentQ].feedback;
+                feedbackEl.className = "feedback show success";
+                document.getElementById('matchNextBtn').style.display = "block";
+                score++;
+            }
+        } else {
+            // No Match
+            el.style.backgroundColor = "#f8d7da";
+            setTimeout(() => {
+                el.style.backgroundColor = "white";
+            }, 400);
+        }
+    }
+
+    // --- NAVIGATION ---
+
+    function nextQuestion() {
+        currentQ++;
+        if (currentQ >= questions.length) {
+            showOutro();
+        } else {
+            render();
+        }
+    }
+
+    function showOutro() {
+        titleDiv.innerText = "Quiz Complete!";
+        progressFill.style.width = "100%";
+        
+        let msg = "";
+        if (score === maxScore) msg = "Perfect Score! You are ready for the Fortress!";
+        else if (score > maxScore / 2) msg = "Great job! You've got the Blueprint!";
+        else msg = "Good effort! Maybe watch the video one more time?";
+
+        contentDiv.innerHTML = `
+            <div class="outro-screen">
+                <div class="score-display">${score} / ${maxScore}</div>
+                <p style="font-size: 1.2rem; color: #555;">${msg}</p>
+                <button class="start-btn" onclick="location.reload()">Play Again</button>
+            </div>
+        `;
+    }
+
+    // Start
+    render();
+
+</script>
+
+</body>
+</html>
