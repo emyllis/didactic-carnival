@@ -5,208 +5,347 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>New Horizons Quiz</title>
     <style>
-        /* --- STYLING --- */
-        :root {
-            --primary: #2c3e50;
-            --accent: #3498db;
-            --success: #27ae60;
-            --error: #c0392b;
-            --gold: #f1c40f;
-            --bg-gradient: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
-        }
-
+        /* --- STYLES --- */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--bg-gradient);
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             margin: 0;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            color: #333;
+            padding: 20px;
         }
 
-        /* Background Pattern */
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-image: radial-gradient(circle at 10% 20%, rgba(52, 152, 219, 0.05) 0%, transparent 20%), radial-gradient(circle at 90% 80%, rgba(241, 196, 15, 0.05) 0%, transparent 20%);
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        .container {
-            width: 90%;
-            max-width: 600px;
+        .card {
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 600px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             overflow: hidden;
-            position: relative;
-            border-top: 5px solid var(--accent);
-            min-height: 300px; /* Ensure visibility */
+            border-top: 6px solid #3498db;
         }
 
         .header {
-            background-color: #f8f9fa;
+            background: #ecf0f1;
             padding: 20px;
             text-align: center;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #ddd;
         }
 
-        .header h1 {
-            margin: 0;
-            color: var(--primary);
-            font-size: 1.5rem;
-        }
+        .header h1 { margin: 0; color: #2c3e50; font-size: 1.4rem; }
+        .progress-bar { height: 5px; background: #eee; width: 100%; }
+        .progress-fill { height: 100%; background: #3498db; width: 0%; transition: width 0.3s; }
 
-        .progress-bar {
-            height: 6px;
-            background: #eee;
-            width: 100%;
-        }
+        .content { padding: 30px; }
 
-        .progress-fill {
-            height: 100%;
-            background: var(--accent);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        .content {
-            padding: 30px;
-        }
-
-        .question-text {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 25px;
-            color: var(--primary);
-        }
-
-        .options-grid {
-            display: grid;
-            gap: 12px;
-        }
-
+        /* Buttons */
         .btn {
-            padding: 15px 20px;
-            border: 2px solid #e0e0e0;
-            background: white;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 1rem;
-            text-align: left;
-            transition: all 0.2s;
+            display: block;
             width: 100%;
-            color: #555;
-        }
-
-        .btn:hover {
-            border-color: var(--accent);
-            background-color: #f0f8ff;
-        }
-
-        .btn.correct {
-            background-color: #d4edda;
-            border-color: var(--success);
-            color: var(--success);
-        }
-
-        .btn.wrong {
-            background-color: #f8d7da;
-            border-color: var(--error);
-            color: var(--error);
-        }
-
-        .feedback {
-            margin-top: 20px;
             padding: 15px;
+            margin-bottom: 10px;
+            border: 2px solid #eee;
+            background: white;
             border-radius: 8px;
-            display: none;
-            text-align: center;
-            font-weight: bold;
-        }
-        .feedback.show { display: block; }
-        .feedback.success { background: #d4edda; color: #155724; }
-        .feedback.error { background: #f8d7da; color: #721c24; }
-
-        .next-btn {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 25px;
-            font-weight: bold;
-            margin-top: 20px;
+            text-align: left;
+            font-size: 1rem;
             cursor: pointer;
-            display: none;
-            margin-left: auto;
-            margin-right: auto;
+            color: #555;
+            transition: all 0.2s;
         }
-        .next-btn:hover { background-color: #34495e; }
 
-        /* Matching Game */
-        .matching-area {
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-        }
-        .match-column {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            width: 48%;
-        }
-        .match-item {
+        .btn:hover { background: #f8f9fa; border-color: #3498db; }
+        .btn:disabled { cursor: default; opacity: 0.7; }
+
+        .correct { background-color: #d4edda !important; border-color: #28a745 !important; color: #155724 !important; }
+        .wrong { background-color: #f8d7da !important; border-color: #dc3545 !important; color: #721c24 !important; }
+
+        /* Matching Game Grid */
+        .match-grid { display: flex; gap: 10px; justify-content: space-between; }
+        .match-col { width: 48%; display: flex; flex-direction: column; gap: 10px; }
+        .match-card {
             padding: 15px;
             border: 2px solid #ddd;
             border-radius: 8px;
             background: #fff;
+            text-align: center;
             cursor: pointer;
             font-size: 0.9rem;
+        }
+        .match-card.selected { border-color: #3498db; background: #ebf5fb; }
+        .match-card.matched { background: #d4edda; border-color: #28a745; opacity: 0.5; pointer-events: none; }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
             text-align: center;
-        }
-        .match-item.selected {
-            border-color: var(--accent);
-            background-color: #eaf2f8;
-        }
-        .match-item.matched {
-            border-color: var(--success);
-            background-color: #d4edda;
-            opacity: 0.6;
-            pointer-events: none;
+            font-weight: bold;
+            display: none;
         }
 
-        .intro-screen, .outro-screen { text-align: center; }
-        .start-btn {
-            background: var(--accent);
+        .next-btn {
+            display: block;
+            margin: 20px auto 0;
+            padding: 12px 30px;
+            background: #2c3e50;
             color: white;
-            font-size: 1.2rem;
-            padding: 15px 40px;
-            border-radius: 30px;
             border: none;
+            border-radius: 25px;
+            font-size: 1rem;
             cursor: pointer;
-            margin-top: 20px;
+            display: none;
         }
-        .score-display {
-            font-size: 3rem;
-            color: var(--accent);
-            font-weight: bold;
-            margin: 20px 0;
-        }
+
+        .error-msg { color: red; text-align: center; padding: 20px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
-    
-    <div class="header">
-        <h1 id="quiz-title">New Horizons Quiz</h1>
+<div class="card">
+    <div class="progress-bar"><div class="progress-fill" id="bar"></div></div>
+    <div class="header"><h1 id="title">New Horizons Quiz</h1></div>
+    <div class="content" id="game-area">
+        <div class="error-msg" id="loading-msg">
+            Loading Quiz...<br>
+            <span style="font-size:0.8em; color:#666; font-weight:normal;">
+                (If this message stays for more than 5 seconds, ensure you are viewing the 'github.io' link, not the source code.)
+            </span>
+        </div>
     </div>
+</div>
 
-    <div class="content" id="quiz-content">
-        <div style="text-align: center; padding: 20px; color: #666;">
-            <h2>Loading Quiz...</h2>
+<script>
+    window.onerror = function(message, source, lineno, colno, error) {
+        const display = document.getElementById('game-area');
+        if(display) {
+            display.innerHTML = `
+                <div class="error-msg">
+                    ⚠️ Error Detected<br>
+                    <small>${message}</small><br>
+                    <small>Line: ${lineno}</small>
+                </div>
+            `;
+        }
+    };
+</script>
+
+<script>
+    // --- 1. THE QUESTIONS ---
+    const quizData = [
+        {
+            type: "intro",
+            text: "Welcome! Let's test your knowledge on the upcoming Apostolic Visit and the message about the Fortress.",
+            button: "Start Quiz"
+        },
+        {
+            type: "choice",
+            q: "Who is the special guest visiting New Horizons next weekend?",
+            opts: ["The Prime Minister", "Dr. Woodruff (The Apostle)", "A famous singer", "A surveyor"],
+            ans: 1,
+            [cite_start]info: "Correct! Dr. Woodruff is visiting to impart a gift. [cite: 224-226]"
+        },
+        {
+            type: "choice",
+            q: "Where is the Saturday meeting being held?",
+            opts: ["The Church Hall", "Coventry Cathedral", "The Techno Centre", "In the park"],
+            ans: 2,
+            info: "Yes! [cite_start]It is at the Techno Centre at 9:30 AM. [cite: 199-200]"
+        },
+        {
+            type: "choice",
+            q: "Dr. Woodruff used an analogy of blind men touching an animal to explain perspective. What was it?",
+            opts: ["A Lion", "A Sheep", "An Elephant", "A Dove"],
+            ans: 2,
+            info: "Correct. [cite_start]One saw a rope, one saw a wall, but the Apostle saw the whole Elephant. [cite: 503-519]"
+        },
+        {
+            type: "choice",
+            q: "We are called to build a 'Fortress'. What are the three levels?",
+            opts: ["Brick, Wood, Stone", "Individual, Family, Community", "Leaders, Deacons, Members", "Past, Present, Future"],
+            ans: 1,
+            info: "Exactly! [cite_start]Personal fortress, Family fortress, and Community fortress. [cite: 555-560]"
+        },
+        {
+            type: "match",
+            q: "Match the Mandate! (Tap Left item, then Right item)",
+            pairs: [
+                {l: "Men", r: "Stand as men of God"},
+                {l: "Women", r: "Walk into new wisdom"},
+                {l: "Youth", r: "Rise with new vision"},
+                {l: "Goal", r: "Christ-likeness"}
+            ],
+            [cite_start]info: "Well done matching the mandates! [cite: 673-676]"
+        },
+        {
+            type: "choice",
+            q: "What is the 'Home Match' mentality?",
+            opts: ["We need to beat the visitors", "We just watch the show", "We set the atmosphere of faith", "We bring food only"],
+            ans: 2,
+            info: "Yes! [cite_start]As the home team, our faith environment must be strong. [cite: 284-290]"
+        },
+        {
+            type: "outro",
+            text: "Quiz Complete! You are ready for the fortress.",
+            button: "Play Again"
+        }
+    ];
+
+    // --- 2. GAME VARIABLES ---
+    let currentIdx = 0;
+    let score = 0;
+    let selectedLeft = null; 
+    let matchesLeft = 0;
+
+    const area = document.getElementById('game-area');
+    const title = document.getElementById('title');
+    const bar = document.getElementById('bar');
+
+    // --- 3. FUNCTIONS ---
+
+    function render() {
+        const item = quizData[currentIdx];
+        
+        // Update Progress
+        let pct = (currentIdx / (quizData.length - 1)) * 100;
+        bar.style.width = pct + "%";
+
+        // 1. Intro Card
+        if(item.type === "intro") {
+            title.innerText = "Welcome";
+            area.innerHTML = `
+                <p style="text-align:center; font-size:1.1rem; color:#444;">${item.text}</p>
+                <button class="next-btn" style="display:block;" onclick="next()">${item.button}</button>
+            `;
+        }
+        // 2. Outro Card
+        else if(item.type === "outro") {
+            title.innerText = "Finished!";
+            area.innerHTML = `
+                <div style="text-align:center;">
+                    <h2 style="font-size:3rem; color:#3498db; margin:10px 0;">${score}/${quizData.length - 2}</h2>
+                    <p style="font-size:1.1rem;">${item.text}</p>
+                    <button class="next-btn" style="display:block;" onclick="location.reload()">${item.button}</button>
+                </div>
+            `;
+        }
+        // 3. Multiple Choice
+        else if(item.type === "choice") {
+            title.innerText = `Question ${currentIdx}`;
+            let html = `<p style="font-weight:bold; font-size:1.1rem;">${item.q}</p>`;
+            
+            item.opts.forEach((opt, i) => {
+                html += `<button class="btn" id="opt-${i}" onclick="checkChoice(${i})">${opt}</button>`;
+            });
+
+            html += `<div id="feed" class="feedback"></div>`;
+            html += `<button id="next-btn" class="next-btn" onclick="next()">Next Question</button>`;
+            area.innerHTML = html;
+        }
+        // 4. Matching Game
+        else if(item.type === "match") {
+            title.innerText = `Question ${currentIdx}`;
+            matchesLeft = item.pairs.length;
+            selectedLeft = null;
+
+            // Prepare lists
+            let lefts = item.pairs.map((p, i) => ({txt: p.l, id: i}));
+            let rights = item.pairs.map((p, i) => ({txt: p.r, id: i})).sort(() => Math.random() - 0.5);
+
+            let html = `<p style="font-weight:bold; font-size:1.1rem;">${item.q}</p>
+                <div class="match-grid">
+                    <div class="match-col" id="col-l">
+                        ${lefts.map(x => `<div class="match-card" onclick="clickLeft(this, ${x.id})">${x.txt}</div>`).join('')}
+                    </div>
+                    <div class="match-col" id="col-r">
+                        ${rights.map(x => `<div class="match-card" onclick="clickRight(this, ${x.id})">${x.txt}</div>`).join('')}
+                    </div>
+                </div>
+                <div id="feed" class="feedback"></div>
+                <button id="next-btn" class="next-btn" onclick="next()">Next Question</button>
+            `;
+            area.innerHTML = html;
+        }
+    }
+
+    // --- CHOICE LOGIC ---
+    window.checkChoice = function(i) {
+        const item = quizData[currentIdx];
+        const feed = document.getElementById('feed');
+        const btn = document.getElementById(`opt-${i}`);
+        const allBtns = document.querySelectorAll('.btn');
+
+        if(i === item.ans) {
+            // Correct
+            btn.classList.add('correct');
+            feed.innerText = item.info;
+            feed.style.display = 'block';
+            feed.style.color = '#155724';
+            feed.style.background = '#d4edda';
+            score++;
+            // Lock buttons
+            allBtns.forEach(b => b.disabled = true);
+            document.getElementById('next-btn').style.display = 'block';
+        } else {
+            // Wrong
+            btn.classList.add('wrong');
+            feed.innerText = "Try again!";
+            feed.style.display = 'block';
+            feed.style.color = '#721c24';
+            feed.style.background = '#f8d7da';
+            setTimeout(() => { btn.classList.remove('wrong'); }, 500);
+        }
+    };
+
+    // --- MATCH LOGIC ---
+    window.clickLeft = function(el, id) {
+        if(el.classList.contains('matched')) return;
+        // Deselect others
+        document.querySelectorAll('#col-l .match-card').forEach(c => c.classList.remove('selected'));
+        el.classList.add('selected');
+        selectedLeft = {el, id};
+    };
+
+    window.clickRight = function(el, id) {
+        if(el.classList.contains('matched')) return;
+        if(!selectedLeft) return;
+
+        if(selectedLeft.id === id) {
+            // Match
+            el.classList.add('matched');
+            selectedLeft.el.classList.add('matched');
+            selectedLeft.el.classList.remove('selected');
+            selectedLeft = null;
+            matchesLeft--;
+            if(matchesLeft === 0) {
+                const feed = document.getElementById('feed');
+                feed.innerText = quizData[currentIdx].info;
+                feed.style.display = 'block';
+                feed.style.color = '#155724';
+                feed.style.background = '#d4edda';
+                document.getElementById('next-btn').style.display = 'block';
+                score++;
+            }
+        } else {
+            // Error
+            el.style.background = '#f8d7da';
+            setTimeout(() => el.style.background = '#fff', 300);
+        }
+    };
+
+    // --- NAV ---
+    window.next = function() {
+        currentIdx++;
+        if(currentIdx < quizData.length) render();
+    };
+
+    // START
+    render();
+
+</script>
+
+</body>
+</html>
