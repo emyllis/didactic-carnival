@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heart to Horizon: Community & Mission Quiz</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #e67e22;
+            --success-color: #27ae60;
+            --error-color: #c0392b;
+            --bg-color: #f4f6f7;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .quiz-container {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 600px;
+            padding: 30px;
+            text-align: center;
+            position: relative; /* Needed for the timer */
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        /* Timer Styles */
+        .timer {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: var(--error-color);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            animation: pulse 1s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.05); }
+        }
+
+        .progress-bar {
+            width: 100%;
+            background-color: #eee;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            height: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--accent-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .question-section h2 {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        button.option-btn {
+            background-color: #fff;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #444;
+            text-align: left;
+        }
+
+        button.option-btn:hover:not(:disabled) {
+            border-color: var(--primary-color);
+            background-color: #f9f9f9;
+        }
+
+        /* States for answers */
+        button.option-btn.correct {
+            background-color: #d4edda;
+            border-color: var(--success-color);
+            color: var(--success-color);
+        }
+
+        button.option-btn.incorrect {
+            background-color: #f8d7da;
+            border-color: var(--error-color);
+            color: var(--error-color);
+        }
+
+        .feedback-section {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            display: none; /* Hidden by default */
+            border-left: 5px solid var(--primary-color);
+        }
+
+        .feedback-text {
+            font-style: italic;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .next-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .next-btn:hover {
+            background-color: #34495e;
+        }
+
+        .results-section {
+            display: none;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: conic-gradient(var(--success-color) 0%, #eee 0%);
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            transition: background 1s ease-out;
+        }
+
+        .score-inner {
+            width: 130px;
+            height: 130px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .score-percentage {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            transition: color 0.5s;
+        }
+
+        .restart-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        /* Styles for the new dropdown input format */
+        select.fill-in-blank {
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 5px;
+            border: 2px solid var(--primary-color);
+            margin-top: 20px;
+            cursor: pointer;
+            width: 80%;
+            max-width: 300px;
+            text-align: center;
+        }
+        
+        select.fill-in-blank:disabled {
+            background-color: #e9ecef;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div class="timer" id="timer">30s</div>
+    
+    <div id="quiz-header">
+        <h1>Heart to Horizon Quiz</h1>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <p id="progress-text">Question 1 of 3</p>
+    </div>
+
+    <div id="question-box" class="question-section">
+        <h2 id="question-text">Loading question...</h2>
+        <div class="options-grid" id="options-container">
+            <!-- Options dynamically injected here -->
+        </div>
+        
+        <div class="feedback-section" id="feedback-box">
+            <span class="feedback-text" id="feedback-text"></span>
+            <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next Question</button>
+        </div>
+    </div>
+
+    <div id="results-box" class="results-section">
+        <h2>Quiz Complete!</h2>
+        <div class="score-circle" id="score-circle">
+            <div class="score-inner">
+                <span class="score-percentage" id="final-score">0%</span>
+            </div>
+        </div>
+        <p id="final-message" style="font-size: 1.1rem; margin: 20px 0;"></p>
+        <button class="restart-btn" onclick="restartQuiz()">Retake Quiz</button>
+    </div>
+</div>
+
+<script>
+    // Quiz Data
+    const quizData = [
+        // Question 1 is now a 'fill-in-the-blank' type
+        {
+            "type": "fill-in-blank",
+            "question": "According to the 'Four Circles', the center-most circle is the...",
+            "correctAnswer": "The Renewed Heart",
+            "options": ["The United Home", "The Engaged City", "The Renewed Heart", "The Bagel of Truth"],
+            "rationale": "Amen! It starts with personal transformation through our interface with God. Keep your heart centered on Him!",
+        },
+        // Question 2 remains a standard 'multiple-choice' type
+        {
+            "type": "multiple-choice",
+            "question": "In the section on worship, what analogy is used to describe becoming accustomed to a negative spiritual atmosphere?",
+            "options": [
+                { "text": "Being 'Nose Blind'", "rationale": "Correct! Just as we get used to a smell, we can get used to spiritual 'sewage'. Stay sensitive to the Spirit!", "isCorrect": true },
+                { "text": "Being 'Ear Deaf'", "rationale": "Close concept, but the document specifically uses the sense of smell. Don't let the enemy dull your spiritual senses!", "isCorrect": false },
+                { "text": "Sleeping through the alarm", "rationale": "A good point, but the text talks about being 'Nose Blind'. Wake up your spirit and press in!", "isCorrect": false },
+                { "text": "Being a Spiritual Couch Potato", "rationale": "Funny, but the text calls it being 'Nose Blind'. Stand up and engage with worship!", "isCorrect": false }
+            ]
+        },
+        // Question 3 remains a standard 'multiple-choice' type
+        {
+            "type": "multiple-choice",
+            "question": "To protect unity, the document suggests we should be like the spire of the Empire State Building. Why?",
+            "options": [
+                { "text": "To provide 'No Landing Pads' for the enemy", "rationale": "Exactly! We must intentionally remove any place where division or accusation can land and take root in our community. Guard the unity of the Spirit!", "isCorrect": true },
+                { "text": "Because we should aim high in our mission", "rationale": "While aiming high is good, the specific analogy relates to structure and preventing enemy access. Guard our unity carefully!", "isCorrect": false },
+                { "text": "To be a beacon of light to the world", "rationale": "We are called to be a light, but the 'spire' analogy refers to cutting off landing pads for division. Protect the atmosphere!", "isCorrect": false },
+                { "text": "To be structurally sound and unshakeable", "rationale": "Structural soundness is important, but the point of the spire is the lack of platforms for the enemy to land on. Keep the enemy out!", "isCorrect": false }
+            ]
+        }
+    ];
+
+    // State Variables
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let answered = false;
+    let timeLeft = 30; // Time per question in seconds
+    let timerInterval;
+
+    // DOM Elements
+    const questionTextEl = document.getElementById('question-text');
+    const optionsContainerEl = document.getElementById('options-container');
+    const progressFillEl = document.getElementById('progress-fill');
+    const progressTextEl = document.getElementById('progress-text');
+    const feedbackBoxEl = document.getElementById('feedback-box');
+    const feedbackTextEl = document.getElementById('feedback-text');
+    const questionBoxEl = document.getElementById('question-box');
+    const resultsBoxEl = document.getElementById('results-box');
+    const finalScoreEl = document.getElementById('final-score');
+    const finalMessageEl = document.getElementById('final-message');
+    const scoreCircleEl = document.getElementById('score-circle');
+    const timerEl = document.getElementById('timer');
+
+    // --- Timer Functions ---
+    function startTimer() {
+        clearInterval(timerInterval);
+        timeLeft = 30;
+        timerEl.textContent = `${timeLeft}s`;
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            timerEl.textContent = `${timeLeft}s`;
+            if (timeLeft <= 5) {
+                timerEl.style.backgroundColor = 'var(--error-color)';
+            }
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                // Automatically move to the next question if time runs out
+                if (!answered) {
+                    selectOption(null, null); // Simulate incorrect answer/timeout
+                }
+            }
+        }, 1000);
+    }
+
+    // Function to display the current question
+    function displayQuestion() {
+        // Reset state for new question
+        answered = false;
+        feedbackBoxEl.style.display = 'none';
+        optionsContainerEl.innerHTML = '';
+        timerEl.style.backgroundColor = 'var(--primary-color)'; // Reset timer color
+
+        if (currentQuestionIndex >= quizData.length) {
+            showResults();
+            return;
+        }
+
+        startTimer(); // Start timer for new question
+
+        const currentQuestion = quizData[currentQuestionIndex];
+        questionTextEl.textContent = currentQuestion.question;
+
+        // Update progress bar and text
+        const progress = ((currentQuestionIndex + 1) / quizData.length) * 100;
+        progressFillEl.style.width = `${progress}%`;
+        progressTextEl.textContent = `Question ${currentQuestionIndex + 1} of ${quizData.length}`;
+
+        // Handle different question types
+        if (currentQuestion.type === 'multiple-choice') {
+            currentQuestion.options.forEach((option) => {
+                const button = document.createElement('button');
+                button.classList.add('option-btn');
+                button.textContent = option.text;
+                button.onclick = () => selectOption(button, option);
+                optionsContainerEl.appendChild(button);
+            });
+        } else if (currentQuestion.type === 'fill-in-blank') {
+            const selectEl = document.createElement('select');
+            selectEl.classList.add('fill-in-blank');
+            selectEl.id = 'fill-blank-select';
+
+            // Add a default, disabled option
+            const defaultOption = document.createElement('option');
+            defaultOption.value = "";
+            defaultOption.textContent = "Select the correct term";
+            defaultOption.disabled = true;
+            defaultOption.selected = true;
+            selectEl.appendChild(defaultOption);
+
+            currentQuestion.options.forEach(optionText => {
+                const optionEl = document.createElement('option');
+                optionEl.value = optionText;
+                optionEl.textContent = optionText;
+                selectEl.appendChild(optionEl);
+            });
+            
+            optionsContainerEl.appendChild(selectEl);
+
+            // Add a "Submit Answer" button for the dropdown
+            const submitBtn = document.createElement('button');
+            submitBtn.classList.add('next-btn'); // Reuse button style
+            submitBtn.textContent = 'Submit Answer';
+            submitBtn.style.marginTop = '20px';
+            submitBtn.onclick = () => handleFillInBlankSubmit(selectEl, currentQuestion);
+            optionsContainerEl.appendChild(submitBtn);
+        }
+    }
+
+    // Function to handle the fill-in-the-blank submission
+    function handleFillInBlankSubmit(selectElement, questionData) {
+        if (answered) return;
+
+        const selectedValue = selectElement.value;
+        const isCorrect = (selectedValue === questionData.correctAnswer);
+
+        // Create a mock option object for the general selectOption function
+        const mockOption = {
+            isCorrect: isCorrect,
+            rationale: questionData.rationale
+        };
+        
+        selectOption(null, mockOption, selectElement);
+    }
+
+
+    // Function to handle option selection (unified for both types)
+    function selectOption(selectedButton, selectedOption, selectElement = null) {
+        if (answered) return; // Prevent multiple clicks
+        answered = true;
+        clearInterval(timerInterval); // Stop the timer
+
+        // Visual feedback
+        if (selectedOption && selectedOption.isCorrect) {
+            score++;
+            if (selectedButton) selectedButton.classList.add('correct');
+        } else {
+            // No feedback class needed for generic timeout (selectedOption is null)
+            if (selectedButton) selectedButton.classList.add('incorrect');
+        }
+
+        // Disable all inputs
+        const allButtons = optionsContainerEl.querySelectorAll('.option-btn, .next-btn');
+        allButtons.forEach(btn => btn.disabled = true);
+        if (selectElement) selectElement.disabled = true;
+        
+        // Show feedback and next button
+        feedbackTextEl.textContent = selectedOption ? selectedOption.rationale : "Time ran out! Review the material and try again.";
+        feedbackBoxEl.style.display = 'block';
+    }
+
+    // Function to move to the next question
+    function nextQuestion() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < quizData.length) {
+            displayQuestion();
+        } else {
+            showResults();
+        }
+    }
+
+    // Function to display final results
+    function showResults() {
+        clearInterval(timerInterval); // Stop timer permanently
+        timerEl.style.display = 'none'; // Hide the timer
+
+        questionBoxEl.style.display = 'none';
+        resultsBoxEl.style.display = 'block';
+        document.getElementById('quiz-header').style.display = 'none';
+
+        const percentage = Math.round((score / quizData.length) * 100);
+        finalScoreEl.textContent = `${percentage}%`;
+
+        // Update progress circle gradient with smooth animation
+        scoreCircleEl.style.background = `conic-gradient(var(--success-color) ${percentage}%, #eee ${percentage}%)`;
+
+        // Set final message based on score and animate text color
+        if (percentage === 100) {
+            finalMessageEl.textContent = "Outstanding! You have a deep understanding of our community vision.";
+            finalScoreEl.style.color = 'var(--success-color)';
+        } else if (percentage >= 70) {
+            finalMessageEl.textContent = "Great job! You grasp the core principles well. Keep growing!";
+            finalScoreEl.style.color = 'var(--accent-color)';
+        } else {
+            finalMessageEl.textContent = "Good effort! Take some time to review the materials.";
+            finalScoreEl.style.color = 'var(--error-color)';
+        }
+    }
+
+    // Function to restart the quiz
+    function restartQuiz() {
+        currentQuestionIndex = 0;
+        score = 0;
+        resultsBoxEl.style.display = 'none';
+        questionBoxEl.style.display = 'block';
+        document.getElementById('quiz-header').style.display = 'block';
+        timerEl.style.display = 'block';
+        displayQuestion();
+    }
+
+    // Initialize the quiz on load
+    document.addEventListener('DOMContentLoaded', displayQuestion);
+
+</script>
+</body>
+</html>
