@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,141 +7,213 @@
             font-family: Arial, sans-serif;
             margin: 20px;
             line-height: 1.6;
+            text-align: center;
+            background: linear-gradient(to right, #ff9966, #ff5e62); /* Colorful gradient background */
+            color: white; /* Makes the text readable on the colorful gradient */
+        }
+        .slide {
+            display: none;
+        }
+        .slide.active {
+            display: block;
         }
         .question {
             margin-bottom: 20px;
         }
-        .question h3 {
-            margin: 0 0 10px 0;
-        }
         .options label {
             display: block;
             margin-bottom: 5px;
+            cursor: pointer;
+        }
+        .options input[type="radio"] {
+            margin-right: 8px;
+        }
+        .timer {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        h1, h3 {
+            color: #ffe599; /* Soft yellow for headings */
         }
     </style>
 </head>
 <body>
-    <h1>Multiple Choice Quiz</h1>
+    <h1>Interactive Multiple Choice Quiz</h1>
+    <div id="quiz-container">
 
-    <div class="question">
-        <h3>1. According to the excerpts, how many years has Chris Waddell been following Jesus?</h3>
-        <div class="options">
-            <label><input type="radio" name="q1" value="A"> A. Ten years</label>
-            <label><input type="radio" name="q1" value="B"> B. Twenty years</label>
-            <label><input type="radio" name="q1" value="C"> C. Forty years or more</label>
-            <label><input type="radio" name="q1" value="D"> D. Fifty years</label>
+        <!-- Question 1 -->
+        <div class="slide active">
+            <div class="question">
+                <h3>1. According to the excerpts, how many years has Chris Waddell been following Jesus?</h3>
+            </div>
+            <div class="options">
+                <label><input type="radio" name="q1" value="A" onclick="wrongAnswer()"> A. Ten years</label>
+                <label><input type="radio" name="q1" value="B" onclick="wrongAnswer()"> B. Twenty years</label>
+                <label><input type="radio" name="q1" value="C" onclick="nextSlide()"> C. Forty years or more</label>
+                <label><input type="radio" name="q1" value="D" onclick="wrongAnswer()"> D. Fifty years</label>
+            </div>
         </div>
-        <p><strong>Correct Answer:</strong> Option C</p>
-        <p><strong>Source:</strong> [1]</p>
+
+        <!-- Question 2 -->
+        <div class="slide">
+            <div class="question">
+                <h3>2. What phrase is used by Chris to describe death during the October 26 sermon?</h3>
+            </div>
+            <div class="options">
+                <label><input type="radio" name="q2" value="A" onclick="wrongAnswer()"> A. A full stop</label>
+                <label><input type="radio" name="q2" value="B" onclick="nextSlide()"> B. A comma, not a full stop</label>
+                <label><input type="radio" name="q2" value="C" onclick="wrongAnswer()"> C. The end of the road</label>
+                <label><input type="radio" name="q2" value="D" onclick="wrongAnswer()"> D. A final goodbye</label>
+            </div>
+        </div>
+
+        <!-- Question 3 -->
+        <div class="slide">
+            <div class="question">
+                <h3>3. Where is the Big Power Plant target for bombing mentioned in the context of the Ukraine update?</h3>
+            </div>
+            <div class="options">
+                <label><input type="radio" name="q3" value="A" onclick="wrongAnswer()"> A. Kyiv</label>
+                <label><input type="radio" name="q3" value="B" onclick="wrongAnswer()"> B. Lviv</label>
+                <label><input type="radio" name="q3" value="C" onclick="nextSlide()"> C. Zapparishna (Zaporizhzhia)</label>
+                <label><input type="radio" name="q3" value="D" onclick="wrongAnswer()"> D. Dnieper</label>
+            </div>
+        </div>
+
+        <!-- Question 4 -->
+        <div class="slide">
+            <div class="question">
+                <h3>4. What is the name of the project involving packing shoe boxes for children in need?</h3>
+            </div>
+            <div class="options">
+                <label><input type="radio" name="q4" value="A" onclick="wrongAnswer()"> A. Project Heritage</label>
+                <label><input type="radio" name="q4" value="B" onclick="nextSlide()"> B. Operation Christmas Child</label>
+                <label><input type="radio" name="q4" value="C" onclick="wrongAnswer()"> C. The Samaritan Project</label>
+                <label><input type="radio" name="q4" value="D" onclick="wrongAnswer()"> D. Hope Network</label>
+            </div>
+        </div>
+
+        <!-- Question 5 -->
+        <div class="slide">
+            <div class="question">
+                <h3>5. In the November 23 transcript, why is Roman and Angelica's family planning to move to Germany in January?</h3>
+            </div>
+            <div class="options">
+                <label><input type="radio" name="q5" value="A" onclick="nextSlide()"> A. Because of Daniel's 18th birthday and potential conscription</label>
+                <label><input type="radio" name="q5" value="B" onclick="wrongAnswer()"> B. To start a new business</label>
+                <label><input type="radio" name="q5" value="C" onclick="wrongAnswer()"> C. To study at university</label>
+                <label><input type="radio" name="q5" value="D" onclick="wrongAnswer()"> D. For a vacation</label>
+            </div>
+        </div>
+
+        <!-- Question 6 -->
+        <div class="slide">
+            <div class="question">
+                <h3>6. Which city is Jeremiah Mashotte from in Zimbabwe?</h3>
+            </div>
+            <div class="options">
+                <label><input type="radio" name="q6" value="A" onclick="wrongAnswer()"> A. Bulawayo</label>
+                <label><input type="radio" name="q6" value="B" onclick="nextSlide()"> B. Harare</label>
+                <label><input type="radio" name="q6" value="C" onclick="wrongAnswer()"> C. Mutare</label>
+                <label><input type="radio" name="q6" value="D" onclick="wrongAnswer()"> D. Gweru</label>
+            </div>
+        </div>
+
+        <!-- Question 7 -->
+        <div class="slide">
+            <div class="question">
+                <h3>7. How many platforms did Dr. Noel Woodruff give regarding the architecture of worship?</h3>
+            </div>
+            <div class="options">
+                <label><input type="radio" name="q7" value="A" onclick="wrongAnswer()"> A. Three</label>
+                <label><input type="radio" name="q7" value="B" onclick="wrongAnswer()"> B. Five</label>
+                <label><input type="radio" name="q7" value="C" onclick="wrongAnswer()"> C. Six</label>
+                <label><input type="radio" name="q7" value="D" onclick="nextSlide()"> D. Seven</label>
+            </div>
+        </div>
+
+        <!-- Question 8 -->
+        <div class="slide">
+            <div class="question">
+                <h3>8. According to the November 30 transcript, what is the 'native language' of the devil?</h3>
+            </div>
+            <div class="options">
+                <label><input type="radio" name="q8" value="A" onclick="wrongAnswer()"> A. Chaos</label>
+                <label><input type="radio" name="q8" value="B" onclick="wrongAnswer()"> B. Hatred</label>
+                <label><input type="radio" name="q8" value="C" onclick="nextSlide()"> C. Lies</label>
+                <label><input type="radio" name="q8" value="D" onclick="wrongAnswer()"> D. Murmuring</label>
+            </div>
+        </div>
+
+        <!-- Question 9 -->
+        <div class="slide">
+            <div class="question">
+                <h3>9. What does Dr. Woodruff say our attitude determines in the context of worship?</h3>
+            </div>
+            <div class="options">
+                <label><input type="radio" name="q9" value="A" onclick="wrongAnswer()"> A. Our latitude</label>
+                <label><input type="radio" name="q9" value="B" onclick="nextSlide()"> B. Our altitude</label>
+                <label><input type="radio" name="q9" value="C" onclick="wrongAnswer()"> C. Our gratitude</label>
+                <label><input type="radio" name="q9" value="D" onclick="wrongAnswer()"> D. Our fortitude</label>
+            </div>
+        </div>
+
+        <!-- Question 10 -->
+        <div class="slide">
+            <div class="question">
+                <h3>10. Approximately how long did the Wise Men travel from Persia to Jerusalem?</h3>
+            </div>
+            <div class="options">
+                <label><input type="radio" name="q10" value="A" onclick="wrongAnswer()"> A. One week</label>
+                <label><input type="radio" name="q10" value="B" onclick="wrongAnswer()"> B. One month</label>
+                <label><input type="radio" name="q10" value="C" onclick="nextSlide()"> C. Three months</label>
+                <label><input type="radio" name="q10" value="D" onclick="wrongAnswer()"> D. Seven hundred years</label>
+            </div>
+        </div>
+
+        <!-- End page -->
+        <div class="slide">
+            <h2>Congratulations! You completed the quiz.</h2>
+            <p>Your timing and answers were recorded. Well done!</p>
+        </div>
+
     </div>
 
-    <div class="question">
-        <h3>2. What phrase is used by Chris to describe death during the October 26 sermon?</h3>
-        <div class="options">
-            <label><input type="radio" name="q2" value="A"> A. A full stop</label>
-            <label><input type="radio" name="q2" value="B"> B. A comma, not a full stop</label>
-            <label><input type="radio" name="q2" value="C"> C. The end of the road</label>
-            <label><input type="radio" name="q2" value="D"> D. A final goodbye</label>
-        </div>
-        <p><strong>Correct Answer:</strong> Option B</p>
-        <p><strong>Source:</strong> [1]</p>
+    <!-- Timer -->
+    <div class="timer">
+        Time Left: <span id="timer">180</span> seconds
     </div>
 
-    <div class="question">
-        <h3>3. Where is the Big Power Plant target for bombing mentioned in the context of the Ukraine update?</h3>
-        <div class="options">
-            <label><input type="radio" name="q3" value="A"> A. Kyiv</label>
-            <label><input type="radio" name="q3" value="B"> B. Lviv</label>
-            <label><input type="radio" name="q3" value="C"> C. Zapparishna (Zaporizhzhia)</label>
-            <label><input type="radio" name="q3" value="D"> D. Dnieper</label>
-        </div>
-        <p><strong>Correct Answer:</strong> Option C</p>
-        <p><strong>Source:</strong> [1]</p>
-    </div>
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const timerElement = document.getElementById('timer');
+        let timeLeft = 180;
 
-    <div class="question">
-        <h3>4. What is the name of the project involving packing shoe boxes for children in need?</h3>
-        <div class="options">
-            <label><input type="radio" name="q4" value="A"> A. Project Heritage</label>
-            <label><input type="radio" name="q4" value="B"> B. Operation Christmas Child</label>
-            <label><input type="radio" name="q4" value="C"> C. The Samaritan Project</label>
-            <label><input type="radio" name="q4" value="D"> D. Hope Network</label>
-        </div>
-        <p><strong>Correct Answer:</strong> Option B</p>
-        <p><strong>Source:</strong> [1]</p>
-    </div>
+        // Function to show the next slide
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                slides[currentSlide].classList.remove('active');
+                currentSlide++;
+                slides[currentSlide].classList.add('active');
+            }
+        }
 
-    <div class="question">
-        <h3>5. In the November 23 transcript, why is Roman and Angelica's family planning to move to Germany in January?</h3>
-        <div class="options">
-            <label><input type="radio" name="q5" value="A"> A. Because of Daniel's 18th birthday and potential conscription</label>
-            <label><input type="radio" name="q5" value="B"> B. To start a new business</label>
-            <label><input type="radio" name="q5" value="C"> C. To study at university</label>
-            <label><input type="radio" name="q5" value="D"> D. For a vacation</label>
-        </div>
-        <p><strong>Correct Answer:</strong> Option A</p>
-        <p><strong>Source:</strong> [2]</p>
-    </div>
+        // Function to handle incorrect answers
+        function wrongAnswer() {
+            alert('Incorrect answer. Please try again!');
+        }
 
-    <div class="question">
-        <h3>6. Which city is Jeremiah Mashotte from in Zimbabwe?</h3>
-        <div class="options">
-            <label><input type="radio" name="q6" value="A"> A. Bulawayo</label>
-            <label><input type="radio" name="q6" value="B"> B. Harare</label>
-            <label><input type="radio" name="q6" value="C"> C. Mutare</label>
-            <label><input type="radio" name="q6" value="D"> D. Gweru</label>
-        </div>
-        <p><strong>Correct Answer:</strong> Option B</p>
-        <p><strong>Source:</strong> [1, 2]</p>
-    </div>
-
-    <div class="question">
-        <h3>7. How many platforms did Dr. Noel Woodruff give regarding the architecture of worship (also adapted for the wider Congress)?</h3>
-        <div class="options">
-            <label><input type="radio" name="q7" value="A"> A. Three</label>
-            <label><input type="radio" name="q7" value="B"> B. Five</label>
-            <label><input type="radio" name="q7" value="C"> C. Six</label>
-            <label><input type="radio" name="q7" value="D"> D. Seven</label>
-        </div>
-        <p><strong>Correct Answer:</strong> Option D</p>
-        <p><strong>Source:</strong> [2, 3]</p>
-    </div>
-
-    <div class="question">
-        <h3>8. According to the November 30 transcript, what is the 'native language' of the devil?</h3>
-        <div class="options">
-            <label><input type="radio" name="q8" value="A"> A. Chaos</label>
-            <label><input type="radio" name="q8" value="B"> B. Hatred</label>
-            <label><input type="radio" name="q8" value="C"> C. Lies</label>
-            <label><input type="radio" name="q8" value="D"> D. Murmuring</label>
-        </div>
-        <p><strong>Correct Answer:</strong> Option C</p>
-        <p><strong>Source:</strong> [4]</p>
-    </div>
-
-    <div class="question">
-        <h3>9. What does Dr. Woodruff say our attitude determines in the context of worship?</h3>
-        <div class="options">
-            <label><input type="radio" name="q9" value="A"> A. Our latitude</label>
-            <label><input type="radio" name="q9" value="B"> B. Our altitude</label>
-            <label><input type="radio" name="q9" value="C"> C. Our gratitude</label>
-            <label><input type="radio" name="q9" value="D"> D. Our fortitude</label>
-        </div>
-        <p><strong>Correct Answer:</strong> Option B</p>
-        <p><strong>Source:</strong> [1, 2]</p>
-    </div>
-
-    <div class="question">
-        <h3>10. According to the December 22 transcript, approximately how long did the Wise Men travel from Persia to Jerusalem?</h3>
-        <div class="options">
-            <label><input type="radio" name="q10" value="A"> A. One week</label>
-            <label><input type="radio" name="q10" value="B"> B. One month</label>
-            <label><input type="radio" name="q10" value="C"> C. Three months</label>
-            <label><input type="radio" name="q10" value="D"> D. Seven hundred years</label>
-        </div>
-        <p><strong>Correct Answer:</strong> Option C</p>
-        <p><strong>Source:</strong> [5]</p>
-    </div>
-
+        // Timer countdown
+        const timer = setInterval(() => {
+            timeLeft--;
+            timerElement.textContent = timeLeft;
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                alert('Time is up! The quiz is over.');
+                document.getElementById('quiz-container').innerHTML = '<h2>Time is up! The quiz has ended.</h2>';
+            }
+        }, 1000);
+    </script>
 </body>
 </html>
