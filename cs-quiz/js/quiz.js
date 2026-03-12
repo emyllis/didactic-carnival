@@ -117,7 +117,6 @@
     container.innerHTML = q.options.map(function(opt, i) {
       const inputType = isMulti ? 'checkbox' : 'radio';
       return '<label class="option-label" tabindex="0"' +
-        ' onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();this.click()}"' +
         ' role="' + (isMulti ? 'checkbox' : 'radio') + '"' +
         ' aria-checked="false">' +
         '<input type="' + inputType + '" class="option-input" name="answer" value="' + i + '"' +
@@ -126,9 +125,20 @@
         '</label>';
     }).join('');
 
-    // Add click handlers
+    // Add click and keyboard handlers programmatically
     container.querySelectorAll('.option-label').forEach(function(label, i) {
-      label.addEventListener('click', function() { toggleOption(label, i, isMulti); });
+      label.addEventListener('click', function(e) {
+        // Prevent the browser from synthesising a second click on the wrapped
+        // hidden input (which would bubble back and double-toggle the selection).
+        e.preventDefault();
+        toggleOption(label, i, isMulti);
+      });
+      label.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggleOption(label, i, isMulti);
+        }
+      });
     });
   }
 
@@ -244,12 +254,19 @@
       }
     }
 
-    // References
+    // References — only render http/https URLs to prevent javascript:/data: exploitation
     if (q.references && q.references.length > 0) {
-      refsBlock.style.display = 'block';
-      refsList.innerHTML = q.references.map(function(ref) {
-        return '<li><a href="' + escapeHtml(ref) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(ref) + '</a></li>';
-      }).join('');
+      const safeRefs = q.references.filter(function(ref) {
+        try { return /^https?:\/\//i.test(ref); } catch { return false; }
+      });
+      if (safeRefs.length > 0) {
+        refsBlock.style.display = 'block';
+        refsList.innerHTML = safeRefs.map(function(ref) {
+          return '<li><a href="' + escapeHtml(ref) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(ref) + '</a></li>';
+        }).join('');
+      } else {
+        refsBlock.style.display = 'none';
+      }
     } else {
       refsBlock.style.display = 'none';
     }

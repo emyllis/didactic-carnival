@@ -36,10 +36,10 @@
     const topics = window.getTopics(questions);
     const qProgress = progress.questions || {};
 
-    grid.innerHTML = topics.map(topic => {
+    grid.innerHTML = topics.map(function(topic) {
       const topicQs = window.getQuestionsByTopic(questions, topic);
-      const attempted = topicQs.filter(q => qProgress[q.id]).length;
-      const correct = topicQs.filter(q => qProgress[q.id] && qProgress[q.id].lastCorrect).length;
+      const attempted = topicQs.filter(function(q) { return qProgress[q.id]; }).length;
+      const correct = topicQs.filter(function(q) { return qProgress[q.id] && qProgress[q.id].lastCorrect; }).length;
       const pct = topicQs.length > 0 ? Math.round(attempted / topicQs.length * 100) : 0;
       const icon = window.TOPIC_ICONS[topic] || '📚';
       const cls = window.topicClass(topic);
@@ -47,9 +47,8 @@
       return `
         <article class="pack-card ${cls}" role="listitem"
           tabindex="0"
-          aria-label="Start ${topic} quiz, ${attempted} of ${topicQs.length} attempted"
-          onclick="startPack('${topic.replace(/'/g, '&#39;')}')"
-          onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();startPack('${topic.replace(/'/g, '&#39;')}');}">
+          data-topic="${topic.replace(/"/g, '&quot;')}"
+          aria-label="Start ${topic} quiz, ${attempted} of ${topicQs.length} attempted">
           <div class="pack-icon" aria-hidden="true">${icon}</div>
           <h3 class="pack-title">${topic}</h3>
           <p class="pack-count">${topicQs.length} question${topicQs.length !== 1 ? 's' : ''}</p>
@@ -64,6 +63,18 @@
         </article>
       `;
     }).join('');
+
+    // Attach event listeners programmatically to avoid inline handler XSS risk
+    grid.querySelectorAll('.pack-card').forEach(function(card) {
+      var topic = card.dataset.topic;
+      card.addEventListener('click', function() { startPack(topic); });
+      card.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          startPack(topic);
+        }
+      });
+    });
   }
 
   window.startPack = function(topic) {
