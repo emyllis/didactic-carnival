@@ -1,0 +1,336 @@
+[
+  {
+    "id": "bigo-1",
+    "topic": "Big-O Complexity",
+    "prompt": "What does O(n log n) mean in terms of algorithm behavior?",
+    "type": "multiple-choice",
+    "options": [
+      "The algorithm takes n times log(n) seconds to run",
+      "The algorithm's steps grow proportionally to n·log(n) as input size grows",
+      "The algorithm runs in logarithmic time",
+      "The algorithm uses log(n) memory and n time"
+    ],
+    "correct": 1,
+    "explanation": "Big-O notation describes how the number of operations scales relative to input size n — not actual time in seconds. O(n log n) means the operation count grows as n multiplied by log(n). Hardware speed and constant factors are ignored.",
+    "misconception": "Confusing Big-O with actual runtime in seconds rather than growth rate of operations.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "bigo-2",
+    "topic": "Big-O Complexity",
+    "prompt": "Algorithm A is O(n²) and Algorithm B is O(n log n). For which scenario might A actually be faster?",
+    "type": "multiple-choice",
+    "options": [
+      "Never — O(n²) is always slower",
+      "When n is very small (e.g., n < 20)",
+      "When the hardware is faster",
+      "When the problem is sorting"
+    ],
+    "correct": 1,
+    "explanation": "Big-O hides constant factors and lower-order terms. For small n, an O(n²) algorithm with tiny constants can outperform an O(n log n) algorithm with large overhead. Insertion sort (O(n²)) often beats merge sort (O(n log n)) on tiny arrays.",
+    "misconception": "Assuming the algorithm with lower Big-O complexity is always faster in practice.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "bigo-3",
+    "topic": "Big-O Complexity",
+    "prompt": "Which of the following are TRUE about O(1) — constant time? (Select all that apply)",
+    "type": "multi-select",
+    "options": [
+      "The operation always takes exactly 1 step",
+      "The operation's step count does not grow with input size",
+      "Accessing an array element by index is O(1)",
+      "A hash table lookup is always O(1)"
+    ],
+    "correct": [1, 2],
+    "explanation": "O(1) means step count is bounded by a constant regardless of input size — not necessarily 1 step. Array index access is O(1) on RAM-based machines. Hash table lookup is O(1) *on average* but O(n) worst-case due to collisions.",
+    "misconception": "Thinking O(1) means exactly one operation, and that hash table lookup is unconditionally O(1).",
+    "difficulty": "medium"
+  },
+  {
+    "id": "bigo-4",
+    "topic": "Big-O Complexity",
+    "prompt": "Briefly explain why O(n² + n) simplifies to O(n²).",
+    "type": "short-answer",
+    "correct": ["dominant", "largest", "lower-order", "drops"],
+    "explanation": "Big-O focuses on the dominant (fastest-growing) term. As n grows large, n² vastly outpaces n, so n becomes negligible. We drop lower-order terms and constants because they don't affect the growth rate asymptotically.",
+    "misconception": "Students often keep all terms, not realising Big-O captures only the dominant growth rate.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "rec-1",
+    "topic": "Recursion vs Iteration",
+    "prompt": "A recursive function that lacks a correct base case will:",
+    "type": "multiple-choice",
+    "options": [
+      "Run forever and never crash",
+      "Cause a stack overflow error eventually",
+      "Automatically use the heap instead of the stack",
+      "Run slower but still produce the right answer"
+    ],
+    "correct": 1,
+    "explanation": "Each recursive call adds a stack frame. Without a base case, calls accumulate until the call stack is exhausted, causing a stack overflow (StackOverflowError in Java, RecursionError in Python). The program crashes — it does not run forever.",
+    "misconception": "Thinking infinite recursion loops forever like an infinite while loop rather than crashing.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "rec-2",
+    "topic": "Recursion vs Iteration",
+    "prompt": "Tail-call optimisation (TCO) in languages that support it means:",
+    "type": "multiple-choice",
+    "options": [
+      "Recursive code runs faster because it uses the heap",
+      "The compiler/runtime can reuse the current stack frame, avoiding stack growth",
+      "All recursive functions are automatically converted to loops",
+      "Recursion and iteration have identical performance on all platforms"
+    ],
+    "correct": 1,
+    "explanation": "TCO lets a compiler reuse the current call's stack frame for a tail call (where the recursive call is the very last action). This eliminates stack growth and makes tail-recursive functions as efficient as loops — but only in languages/environments that support TCO (e.g., Scheme, some JS engines, Kotlin).",
+    "misconception": "Assuming all recursion is stack-hungry or that TCO applies universally across all languages.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "rec-3",
+    "topic": "Recursion vs Iteration",
+    "prompt": "Which statements about recursion vs iteration are TRUE? (Select all that apply)",
+    "type": "multi-select",
+    "options": [
+      "Any recursive algorithm can be rewritten iteratively",
+      "Recursive solutions are always less efficient than iterative ones",
+      "Some problems (e.g., tree traversal) are more naturally expressed recursively",
+      "Recursion always uses more memory than iteration"
+    ],
+    "correct": [0, 2],
+    "explanation": "Any recursion can be converted to iteration (using an explicit stack if needed). However, recursion is not inherently less efficient — tail recursion can be as fast as loops, and for some problems the recursive form is more natural and readable. Memory usage depends on the specific algorithm and whether TCO applies.",
+    "misconception": "Overgeneralising that recursion is always inferior to iteration in performance and memory.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "pnp-1",
+    "topic": "P vs NP",
+    "prompt": "If someone proves P = NP, what would it mean?",
+    "type": "multiple-choice",
+    "options": [
+      "All problems become solvable in constant time",
+      "Every problem whose solution can be quickly verified could also be quickly solved",
+      "Only polynomial problems would exist",
+      "Cryptography would become stronger"
+    ],
+    "correct": 1,
+    "explanation": "P = NP would mean that every problem for which a solution can be verified in polynomial time can also be *solved* in polynomial time. This would have enormous implications — many currently hard problems (and most public-key cryptography) would become efficiently solvable.",
+    "misconception": "Thinking P = NP means all problems become trivial or constant-time.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "pnp-2",
+    "topic": "P vs NP",
+    "prompt": "NP-complete problems are:",
+    "type": "multiple-choice",
+    "options": [
+      "Problems with no known solution",
+      "The hardest problems in NP, to which all NP problems reduce",
+      "Problems that take non-polynomial time to solve",
+      "Problems that are unsolvable"
+    ],
+    "correct": 1,
+    "explanation": "NP-complete problems are decision problems in NP such that every problem in NP can be reduced to them in polynomial time. They are the 'hardest' problems in NP — a polynomial solution for any one NP-complete problem would imply P = NP.",
+    "misconception": "Confusing 'NP' with 'non-polynomial' — NP stands for 'nondeterministic polynomial time'.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "pnp-3",
+    "topic": "P vs NP",
+    "prompt": "What is the key difference between a problem being 'hard to solve' and 'hard to verify'?",
+    "type": "short-answer",
+    "correct": ["verify", "check", "solution", "polynomial", "quickly"],
+    "explanation": "A problem being hard to *solve* means finding a solution takes a long time. Hard to *verify* means even checking a proposed solution is difficult. NP problems are those where verifying a solution is easy (polynomial time), even if finding one is believed to be hard. P problems are easy both to solve and verify.",
+    "misconception": "Students often conflate difficulty of solving with difficulty of verification.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "mem-1",
+    "topic": "Memory: Stack & Heap",
+    "prompt": "In most languages, local variables inside a function are stored:",
+    "type": "multiple-choice",
+    "options": [
+      "On the heap, managed by the garbage collector",
+      "On the stack, and freed when the function returns",
+      "In global memory, shared between all functions",
+      "In CPU registers only"
+    ],
+    "correct": 1,
+    "explanation": "Local variables and function call metadata (return address, parameters) are stored on the call stack. When a function returns, its stack frame is popped and that memory is immediately reclaimed. Large or dynamically-sized objects are typically allocated on the heap.",
+    "misconception": "Thinking all variables are heap-allocated or garbage collected.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "mem-2",
+    "topic": "Memory: Stack & Heap",
+    "prompt": "In Java, when you do `int[] arr = new int[100];`, where is the array data stored?",
+    "type": "multiple-choice",
+    "options": [
+      "On the stack",
+      "On the heap",
+      "In the method area",
+      "In CPU cache"
+    ],
+    "correct": 1,
+    "explanation": "In Java, `new` always allocates on the heap. The variable `arr` (a reference) lives on the stack, but the actual array data lives on the heap and is managed by the garbage collector.",
+    "misconception": "Confusing where the reference variable lives (stack) with where the object data lives (heap).",
+    "difficulty": "easy"
+  },
+  {
+    "id": "mem-3",
+    "topic": "Memory: Stack & Heap",
+    "prompt": "Which of the following are TRUE about stack vs heap memory? (Select all that apply)",
+    "type": "multi-select",
+    "options": [
+      "Stack memory is faster to allocate than heap memory",
+      "Heap memory can grow dynamically at runtime",
+      "Stack overflow always means you ran out of RAM",
+      "Heap fragmentation can slow down memory allocation over time"
+    ],
+    "correct": [0, 1, 3],
+    "explanation": "Stack allocation is O(1) — just move a pointer. Heap allocation requires finding free space, making it slower. Heap can grow as needed (up to OS limits). Stack overflow means the call stack limit was exceeded — not necessarily all RAM. Heap fragmentation is a real performance concern for long-running programs.",
+    "misconception": "Treating stack overflow as a general out-of-memory error.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "con-1",
+    "topic": "Concurrency vs Parallelism",
+    "prompt": "What is the main difference between concurrency and parallelism?",
+    "type": "multiple-choice",
+    "options": [
+      "They are the same thing with different names",
+      "Concurrency is about dealing with multiple tasks at once; parallelism is about executing multiple tasks simultaneously",
+      "Parallelism requires a network; concurrency does not",
+      "Concurrency only applies to multi-core CPUs"
+    ],
+    "correct": 1,
+    "explanation": "Concurrency is a design concept — structuring a program to handle multiple tasks (they may interleave, not truly overlap). Parallelism means physically executing multiple computations at the same instant on multiple cores/CPUs. You can have concurrency on a single core (via context switching) without parallelism.",
+    "misconception": "Using 'concurrent' and 'parallel' interchangeably.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "con-2",
+    "topic": "Concurrency vs Parallelism",
+    "prompt": "Adding more threads to a program will always:",
+    "type": "multiple-choice",
+    "options": [
+      "Make it faster",
+      "Make it slower",
+      "Neither — it depends on the workload and available cores",
+      "Cause it to use less memory"
+    ],
+    "correct": 2,
+    "explanation": "More threads can improve performance for I/O-bound or CPU-bound (multi-core) tasks, but can hurt performance for CPU-bound tasks on a single core (thread overhead + context switching) or when threads contend for shared resources. Amdahl's Law quantifies the limits of parallelism.",
+    "misconception": "Believing more threads always equals more speed.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "con-3",
+    "topic": "Concurrency vs Parallelism",
+    "prompt": "What is a race condition, and why is it dangerous in concurrent programs?",
+    "type": "short-answer",
+    "correct": ["race", "shared", "order", "result", "non-deterministic"],
+    "explanation": "A race condition occurs when the outcome of a program depends on the relative timing or ordering of multiple threads accessing shared state. Since scheduling is non-deterministic, the program produces different (often incorrect) results on different runs. This makes bugs hard to reproduce and dangerous in production.",
+    "misconception": "Assuming concurrent code is safe as long as individual operations look atomic in source code.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "hash-1",
+    "topic": "Hash Tables",
+    "prompt": "What happens when two keys hash to the same bucket in a hash table?",
+    "type": "multiple-choice",
+    "options": [
+      "The second key silently overwrites the first",
+      "A collision occurs and must be resolved (e.g., via chaining or open addressing)",
+      "The hash table automatically resizes",
+      "An error is thrown"
+    ],
+    "correct": 1,
+    "explanation": "A hash collision means two keys map to the same bucket. Hash tables handle this via chaining (each bucket is a linked list) or open addressing (find the next available slot). The data is not lost — both keys are stored.",
+    "misconception": "Thinking collisions cause data loss or are automatically prevented.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "hash-2",
+    "topic": "Hash Tables",
+    "prompt": "The average-case time complexity of a hash table lookup is O(1). In the worst case it is:",
+    "type": "multiple-choice",
+    "options": [
+      "O(log n)",
+      "O(n)",
+      "O(n log n)",
+      "Still O(1)"
+    ],
+    "correct": 1,
+    "explanation": "If many keys hash to the same bucket (e.g., a poor hash function or adversarial input), a chaining-based hash table degenerates to a linked list, making lookup O(n). Good hash functions and load factor management keep average case O(1).",
+    "misconception": "Assuming hash tables are always O(1) regardless of input distribution.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "hash-3",
+    "topic": "Hash Tables",
+    "prompt": "Which of the following are good properties of a hash function? (Select all that apply)",
+    "type": "multi-select",
+    "options": [
+      "Deterministic — same input always gives same output",
+      "Uniform distribution across buckets",
+      "Reversible — you can get the input back from the hash",
+      "Fast to compute"
+    ],
+    "correct": [0, 1, 3],
+    "explanation": "A good hash function is deterministic (required for correctness), distributes keys uniformly (minimises collisions), and is fast to compute. Reversibility is NOT desired — cryptographic hash functions are deliberately one-way. Non-cryptographic hash functions also aim to be non-reversible to avoid attacks.",
+    "misconception": "Confusing general hash functions with encryption, or thinking reversibility is a desired property.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "oop-1",
+    "topic": "OOP vs Functional",
+    "prompt": "In object-oriented programming, inheritance is best used when:",
+    "type": "multiple-choice",
+    "options": [
+      "You want to reuse any code between two classes",
+      "There is a genuine 'is-a' relationship between the subclass and superclass",
+      "You want to share behaviour between unrelated classes",
+      "You need to call methods from another class"
+    ],
+    "correct": 1,
+    "explanation": "Inheritance models an 'is-a' relationship (Dog is an Animal). Using inheritance purely for code reuse (when there's no semantic 'is-a' relationship) leads to fragile, tightly coupled designs. Composition ('has-a') is often more appropriate for reuse.",
+    "misconception": "Using inheritance as a code-reuse mechanism rather than to model a semantic relationship.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "oop-2",
+    "topic": "OOP vs Functional",
+    "prompt": "A pure function in functional programming:",
+    "type": "multiple-choice",
+    "options": [
+      "Can modify global variables as long as it returns a value",
+      "Always returns the same output for the same input and has no side effects",
+      "Must be written in a functional language",
+      "Cannot take functions as arguments"
+    ],
+    "correct": 1,
+    "explanation": "A pure function: (1) is deterministic — same inputs always yield same outputs, and (2) has no side effects (no I/O, no mutation of external state). Pure functions are easy to test, reason about, and parallelise.",
+    "misconception": "Thinking 'functional' just means writing functions, or that pure functions can have side effects.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "oop-3",
+    "topic": "OOP vs Functional",
+    "prompt": "Which of the following are TRUE about immutability in functional programming? (Select all that apply)",
+    "type": "multi-select",
+    "options": [
+      "Immutable data cannot be changed after creation",
+      "Immutability eliminates all race conditions in concurrent programs",
+      "Immutability makes it easier to reason about program state",
+      "Using immutability means you cannot represent changing state at all"
+    ],
+    "correct": [0, 2],
+    "explanation": "Immutable data structures cannot be changed after creation — you create new values instead of mutating. This makes reasoning about state much simpler. However, immutability alone doesn't eliminate ALL race conditions (e.g., ordering of operations still matters). Functional programs CAN represent changing state — they return new versions of state rather than mutating in place.",
+    "misconception": "Overstating immutability's guarantees or thinking it prevents all concurrency bugs.",
+    "difficulty": "hard"
+  }
+]

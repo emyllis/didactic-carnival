@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Progress – CS Misconceptions</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <nav class="nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-content">
+      <a href="index.html" class="nav-logo" aria-label="CS Misconceptions Quiz Home">🧠 CS Misconceptions</a>
+      <div class="nav-links">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="progress.html" class="nav-link active" aria-current="page">My Progress</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <h1 class="page-title">My Progress</h1>
+
+    <!-- Overall summary -->
+    <section aria-labelledby="overall-heading">
+      <h2 id="overall-heading" class="section-title">Overall Summary</h2>
+      <div class="stats-grid" id="overall-stats" role="list">
+        <!-- Filled by JS -->
+      </div>
+    </section>
+
+    <!-- Per-topic breakdown -->
+    <section aria-labelledby="topics-heading" style="margin-top:2rem">
+      <h2 id="topics-heading" class="section-title">Topic Breakdown</h2>
+      <div id="topic-breakdown" role="list">
+        <!-- Filled by JS -->
+      </div>
+    </section>
+
+    <!-- Recent activity -->
+    <section aria-labelledby="recent-heading" style="margin-top:2rem">
+      <h2 id="recent-heading" class="section-title">Recent Activity</h2>
+      <div id="recent-activity">
+        <!-- Filled by JS -->
+      </div>
+    </section>
+
+    <!-- Reset button -->
+    <div style="margin-top:3rem;text-align:center">
+      <button class="btn btn-secondary" id="reset-btn">
+        <span aria-hidden="true">🗑️</span> Reset All Progress
+      </button>
+    </div>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <p>CS Misconceptions Quiz · Progress saved in your browser's localStorage</p>
+  </footer>
+
+  <script src="js/questions.js"></script>
+  <script src="js/progress.js"></script>
+</body>
+</html>
