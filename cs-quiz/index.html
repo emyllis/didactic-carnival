@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CS Misconceptions Quiz</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-content">
+      <a href="index.html" class="nav-logo" aria-label="CS Misconceptions Quiz Home">🧠 CS Misconceptions</a>
+      <div class="nav-links">
+        <a href="index.html" class="nav-link active" aria-current="page">Home</a>
+        <a href="progress.html" class="nav-link">My Progress</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <!-- Hero -->
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-content">
+        <h1 id="hero-title">CS Misconceptions Quiz</h1>
+        <p class="hero-subtitle">Challenge your understanding of core Computer Science concepts. Targeted feedback helps you fix the most common misconceptions.</p>
+        <button class="btn btn-hero" id="start-all-btn" aria-label="Start quiz with all questions">Start Full Quiz</button>
+      </div>
+    </section>
+
+    <!-- Stats summary bar -->
+    <div class="container">
+      <div class="summary-bar" id="summary-bar" role="region" aria-label="Your progress summary">
+        <!-- Filled by JS -->
+      </div>
+
+      <!-- Topic packs -->
+      <section aria-labelledby="packs-heading">
+        <h2 id="packs-heading" class="section-title">Question Packs by Topic</h2>
+        <div class="pack-grid" id="pack-grid" role="list">
+          <!-- Filled by JS -->
+        </div>
+      </section>
+
+      <!-- How it works -->
+      <section class="how-it-works" aria-labelledby="how-heading">
+        <h2 id="how-heading" class="section-title">How It Works</h2>
+        <div class="steps-grid">
+          <div class="step-card">
+            <div class="step-icon" aria-hidden="true">📝</div>
+            <h3>Answer Questions</h3>
+            <p>Multiple choice, multi-select, and short-answer questions designed around real CS misconceptions.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-icon" aria-hidden="true">🎯</div>
+            <h3>Rate Your Confidence</h3>
+            <p>Before seeing the answer, rate how confident you are. Tracks calibration over time.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-icon" aria-hidden="true">💡</div>
+            <h3>Get Targeted Feedback</h3>
+            <p>Each answer reveals the misconception you may hold and a clear explanation.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-icon" aria-hidden="true">📈</div>
+            <h3>Track Progress</h3>
+            <p>Your scores and attempts are saved locally. See improvement over time.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <p>CS Misconceptions Quiz · <a href="progress.html">View Progress</a> · Data saved locally in your browser</p>
+  </footer>
+
+  <script src="js/questions.js"></script>
+  <script src="js/home.js"></script>
+</body>
+</html>
